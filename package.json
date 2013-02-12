@@ -1,0 +1,27 @@
+{
+  "author": "David Bochenski",
+  "name": "gint-util",
+  "version": "0.0.1",
+  "main": "./server/index.coffee",
+  "dependencies": {
+    "coffee-script": "~1.4.0",
+    "mongoose": "~3.5.5"
+  },
+  "devDependencies": {
+    "grunt": "0.4.0rc7",
+    "grunt-contrib-copy": "0.4.0rc7",
+    "grunt-contrib-coffee": "0.4.0rc7",
+    "grunt-contrib-clean": "0.4.0rc6",
+    "grunt-contrib-watch": "0.2.0rc7",
+    "grunt-contrib-less": "0.5.0rc7",
+    "grunt-contrib-requirejs": "0.4.0rc7",
+    "grunt-testacular": "0.3.0",
+    "grunt-gint": "0.1.0",
+    "grunt-reload": "git://github.com/webxl/grunt-reload.git",
+    "should": "~1.2.1",
+    "rewire": "~1.0.3",
+    "jasmine-node": "~1.0.26",
+    "supertest": "~0.4.2",
+    "mocha": "~1.8.1"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "gint-security",
+  "version": "0.0.4",
+  "main": "./client/index.js"
+}

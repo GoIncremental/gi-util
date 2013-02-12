@@ -1,6 +1,4 @@
-mongoose = require 'mongoose'
 module.exports = (Resource) ->
-  Resource = mongoose.model name
 
   find = (options, callback) ->
     max = options?.max or 10000
@@ -18,7 +16,7 @@ module.exports = (Resource) ->
       else if resource
         callback err, resource
       else
-        callback 'Cannot find ' + name + ' with id: ' + id
+        callback 'Cannot find ' + Resource.modelName + ' with id: ' + id
 
   create = (json, callback) ->
     obj = new Resource json
@@ -28,7 +26,7 @@ module.exports = (Resource) ->
       else if resource
         callback err, resource
       else
-        callback name + ' could not be saved'
+        callback Resource.modelName + ' could not be saved'
 
   update = (id, json, callback) ->
     Resource.findByIdAndUpdate(id, json, callback)

@@ -125,4 +125,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-gint'
 
   grunt.registerTask 'default'
-  , ['clean', 'coffeeLint', 'coffee', 'requirejs', 'copy', 'clean:temp', 'mocha']
+  , ['clean', 'coffeeLint', 'coffee', 'copy', 'clean:temp', 'mocha']

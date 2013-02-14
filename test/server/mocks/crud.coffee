@@ -9,6 +9,8 @@ exports.create = (body, callback) ->
 exports.update = (id, json, callback) ->
   if id is 'InvalidId'
     callback 'Fail'
+  else if json._id
+    callback 'Fail - id not removed'
   else
     json._id = id
     callback null, json

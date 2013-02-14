@@ -63,17 +63,17 @@ describe 'Crud Controller', ->
           should.not.exist result
           done()
       crudController.update(req,res)
-    it 'returns invalid request if _id exists on body', (done) ->
+    it 'removes _id on update if it exists on body', (done) ->
       req =
         params:
-          id: 'ValidId'
+          id: 'testId'
         body:
           _id: 'ValidId'
       res =
         json: (code, result) ->
-          code.should.equal 400
-          result.should.have.property 'error'
-          , 'Do not specify an _id on update request'
+          code.should.equal 200
+          result.should.have.property '_id'
+          , 'testId'
           done()
       crudController.update(req,res)
   describe 'Destroy', ->

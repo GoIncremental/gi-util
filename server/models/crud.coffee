@@ -44,3 +44,4 @@ module.exports = (Resource) ->
   create: create
   update: update
   destroy: destroy
+  name: Resource.name

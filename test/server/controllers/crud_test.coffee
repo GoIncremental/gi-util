@@ -163,31 +163,28 @@ describe 'Crud Controller', ->
           done()
       crudController.show(req,res)
   describe 'Index', ->
-    it 'returns an array of object as json with OK Status', (done) ->
-      i = 0
-      testCounter = ->
-        i = i + 1
-        if i is 1
-          done()
-      createRes = (qty) ->
+    it 'returns an array of object as json with OK Status limited to max query param', (done) ->
+      req =
+        query:
+          max: 4
+      res =
         json: (code, result) ->
           should.exist code
           code.should.equal 200
-          if qty < 0
-            qty = 0
-          result.length.should.equal qty
-          testCounter()
-      createReq = (qty) ->
+          result.length.should.equal 4
+          done()
+      crudController.index(req,res)
+    it 'returns empy array as json with OK Status if negative max', (done) ->
+      req =
         query:
-          max: qty
-
-      qty = 4
-      crudController.index(createReq(qty),createRes(qty))
-      qty = 12
-      crudController.index(createReq(qty),createRes(qty))
-      qty = -7
-      crudController.index(createReq(qty),createRes(qty))
-
+          max: -7
+      res =
+        json: (code, result) ->
+          should.exist code
+          code.should.equal 200
+          result.length.should.equal 0
+          done()
+      crudController.index(req,res)
     it 'returns an array of object as json with OK Status if no max', (done) ->
       req =
         query: {}
@@ -195,11 +192,11 @@ describe 'Crud Controller', ->
         json: (code, result) ->
           should.exist code
           code.should.equal 200
-          result.length.should.equal 10
+          result.length.should.equal 20
           done()
       crudController.index(req,res)
 
-    it 'returns an array of object as json with OK Status if no max', (done) ->
+    it 'returns 404 and the error message if the model errors', (done) ->
       req =
         query:
           max: 666
@@ -207,6 +204,6 @@ describe 'Crud Controller', ->
         json: (code, result) ->
           should.exist code
           code.should.equal 404
-          should.not.exist result
+          result.should.equal 'The Devil'
           done()
       crudController.index(req,res)

@@ -34,12 +34,14 @@ exports.findById = (id, callback) ->
     callback 'no id'
 
 exports.find = (options, callback) ->
-  should.exist options.limit
-  options.limit.should.be.above -1
-  result = []
-  if options.limit >0
-    result = ({some: 'toto'} for h in [1..options.limit])
-  if options.limit is 666
-    callback 'The Devil'
+  if options.max?
+    options.max.should.be.above -1
+    result = []
+    if options.max > 0
+      result = ({some: 'toto'} for h in [1..options.max])
+    if options.max is 666
+      callback 'The Devil'
+    else
+      callback null, result
   else
-    callback null, result
+    callback null, ({some: 'toto'} for h in [1..20])

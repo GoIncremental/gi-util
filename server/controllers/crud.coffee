@@ -47,23 +47,26 @@ module.exports = (model) ->
 
   index = (req, res) ->
    
-    max = () ->
-      if  isNaN req.query.max
-        10
-      else if req.query.max < 0
-        0
+    options = 
+      query: {}
+
+    for k,v of req.query
+      if k is 'max'
+        if not isNaN(v)
+          if v < 1
+            options.max = 0
+          else
+            options.max = v
       else
-        req.query.max || 10
+        options.query[k] = v
 
-    max = max()
-
-    model.find { limit: max }
+    model.find options
     , (err, result) ->
       if err
-        res.json 404
+        res.json 404, err
       else
         res.json 200, result
-        
+
   index: index
   create: create
   show: read

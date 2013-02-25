@@ -1,9 +1,21 @@
 module.exports = (Resource) ->
 
   find = (options, callback) ->
-    max = options?.max or 10000
-    sort = options?.sort or {}
-    query = options?.query or {}
+    if options? and options.max?
+      max = options.max
+    else
+      max = 10000
+
+    if options? and options.sort?
+      sort = options.sort
+    else
+      sort = {}
+
+    if options? and options.query?
+      query = options.query
+    else
+      query = {}
+
     if max < 1
       callback(null, []) if callback
     else

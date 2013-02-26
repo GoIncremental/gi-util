@@ -57,6 +57,8 @@ module.exports = (model) ->
             options.max = 0
           else
             options.max = v
+      else if k is 'sort'
+        options.sort = v
       else
         options.query[k] = v
 

@@ -163,7 +163,8 @@ describe 'Crud Controller', ->
           done()
       crudController.show(req,res)
   describe 'Index', ->
-    it 'returns an array of object as json with OK Status limited to max query param', (done) ->
+    it 'returns an array of object as json with' +
+    ' OK Status limited to max query param', (done) ->
       req =
         query:
           max: 4

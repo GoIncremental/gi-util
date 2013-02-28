@@ -47,7 +47,7 @@ module.exports = (model) ->
 
   index = (req, res) ->
    
-    options = 
+    options =
       query: {}
 
     for k,v of req.query

@@ -102,8 +102,8 @@ module.exports = (grunt) ->
             no_mangle: false
     watch:
       mochatests:
-        files: ['testbin/server/**/*.coffee', 'testbin/test/server/**/*.js']
-        tasks: ['mocha']
+        files: ['server/**/*.coffee', 'test/server/**/*.coffee']
+        tasks: ['default']
 
     mocha:
       all:
@@ -126,3 +126,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'default'
   , ['clean', 'coffeeLint', 'coffee', 'copy', 'clean:temp', 'mocha']
+
+  grunt.registerTask 'run'
+  , ['default', 'watch']

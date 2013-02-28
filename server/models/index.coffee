@@ -1,3 +1,6 @@
-module.exports = (mongoose) ->
+counter = require './counter'
+module.exports =
   crud: require './crud'
-  counter: require('./counter')(mongoose)
+  counter: counter
+  loadSchemas: (mongoose) ->
+    counter.loadSchema mongoose

@@ -1,3 +1,3 @@
-module.exports = (mongoose) ->
-  exports.models = require('./models')(mongoose)
-  exports.controllers = require './controllers/controllers'
+module.exports =
+  models: require './models'
+  controllers: require './controllers/controllers'

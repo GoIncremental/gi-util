@@ -1,4 +1,4 @@
 module.exports =
   models: require './models'
-  controllers: require './controllers/controllers'
+  controllers: require './controllers'
   common: require './common'

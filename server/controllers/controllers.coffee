@@ -1,1 +1,0 @@
-exports.crud = require './crud'

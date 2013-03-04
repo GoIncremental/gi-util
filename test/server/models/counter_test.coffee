@@ -12,13 +12,13 @@ describe 'Counter Model', ->
     done()
 
   it 'Can intialize a counter', (done) ->
-    models.counter.getNext mongoose, mongoose.model('dummy'), (err, res) ->
+    models.counter.getNext mongoose, 'dummy', (err, res) ->
       should.not.exist.err
       res.should.equal 1
       done()
 
   it 'Can increment a counter', (done) ->
-    models.counter.getNext mongoose, mongoose.model('dummy'), (err, res) ->
+    models.counter.getNext mongoose, 'dummy', (err, res) ->
       should.not.exist.err
       res.should.equal 2
       done()

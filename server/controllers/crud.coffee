@@ -3,7 +3,7 @@ module.exports = (model) ->
   create = (req, res) ->
     model.create req.body, (err, obj) ->
       if err
-        res.json 500
+        res.json 500, {error: err.toString()}
       else
         res.json 200, obj
   update = (req, res) ->

@@ -19,13 +19,13 @@ describe 'Crud Controller', ->
           done()
       crudController.create(req,res)
 
-    it 'returns no data and 500 Status', (done) ->
+    it 'returns error and 500 Status if no body', (done) ->
       req =
         body: null
       res =
         json: (code, result) ->
           code.should.equal 500
-          should.not.exist result
+          result.should.have.property 'error', 'no body'
           done()
       crudController.create(req,res)
   describe 'Update', ->

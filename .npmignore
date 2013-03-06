@@ -1,3 +1,4 @@
 node_modules/
 client/
 test/
+!test/server/mocks/

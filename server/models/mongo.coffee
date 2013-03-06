@@ -1,6 +1,4 @@
-mongoose = require 'mongoose'
-
-module.exports = (conf) ->
+module.exports = (mongoose, conf) ->
   port = parseInt conf.port
 
   opts =

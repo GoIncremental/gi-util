@@ -1,2 +1,2 @@
 module.exports =
-  crud = require './crud'
+  crud: require './crud'

@@ -59,11 +59,13 @@ module.exports = (model) ->
             options.max = v
       else if k is 'sort'
         options.sort = v
+      else if k is 'page'
+        options.page = v
       else
         options.query[k] = v
 
     model.find options
-    , (err, result) ->
+    , (err, result, pageCount) ->
       if err
         res.json 404, err
       else

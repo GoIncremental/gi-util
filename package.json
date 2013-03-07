@@ -25,6 +25,7 @@
     "rewire": "~1.0.3",
     "jasmine-node": "~1.0.26",
     "supertest": "~0.4.2",
-    "mocha": "~1.8.1"
+    "mocha": "~1.8.1",
+    "sinon": "~1.6.0"
   }
 }

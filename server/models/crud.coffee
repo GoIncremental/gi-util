@@ -11,15 +11,35 @@ module.exports = (Resource) ->
     else
       sort = {}
 
+    if options? and options.page?
+      page = options.page
+    else
+      page = 1
+
     if options? and options.query?
       query = options.query
     else
       query = {}
-
+    
+    skipFrom = page * max - max
+    
     if max < 1
       callback(null, []) if callback
     else
-      Resource.find(query).sort(sort).limit(max).exec callback
+      query = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
+
+      query.exec (err, results) ->
+        if err
+          callback err, null, null
+        else
+          Resource.count query, (err, count) ->
+            if err
+              callback err, null, null
+            else
+              pageCount = Math.floor(count/max)
+              if max is 0
+                max = 1
+              callback null, results, pageCount
 
   findById = (id, callback) ->
     Resource.findOne { _id : id}, (err, resource) ->

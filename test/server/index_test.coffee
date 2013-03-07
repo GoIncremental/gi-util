@@ -14,3 +14,11 @@ describe 'NPM Module Exports', ->
   it 'exports controllers', (done) ->
     should.exist index.controllers
     done()
+
+  it 'exports common', (done) ->
+    should.exist index.common
+    done()
+
+  it 'exports mocks', (done) ->
+    should.exist index.mocks
+    done()

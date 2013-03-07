@@ -22,23 +22,21 @@ module.exports = (Resource) ->
       query = {}
     
     skipFrom = page * max - max
-    
+
     if max < 1
       callback(null, []) if callback
     else
-      query = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
-
-      query.exec (err, results) ->
+      command = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
+      command.exec (err, results) ->
         if err
-          callback err, null, null
+          callback err, null, 0
         else
           Resource.count query, (err, count) ->
             if err
-              callback err, null, null
+              callback 'could not count the results', null, 0
             else
-              pageCount = Math.floor(count/max)
-              if max is 0
-                max = 1
+              #safe because max >= 1
+              pageCount = Math.ceil(count/max)
               callback null, results, pageCount
 
   findById = (id, callback) ->

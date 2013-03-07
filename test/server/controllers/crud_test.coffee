@@ -1,5 +1,7 @@
 should = require 'should'
 path = require 'path'
+sinon = require 'sinon'
+assert = require 'assert'
 
 dir =  path.normalize __dirname + '../../../../server'
 
@@ -208,3 +210,24 @@ describe 'Crud Controller', ->
           result.should.equal 'The Devil'
           done()
       crudController.index(req,res)
+
+    it 'extracts page query parameter into options param', (done) ->
+      req =
+        query:
+          page: 2
+
+      json = sinon.spy()
+      res =
+        json: json
+
+      find = sinon.stub().callsArgWith(1,null,{})
+      model =
+        find: find
+
+      controller = crud model
+      controller.index(req,res)
+
+      assert json.calledWith(200, {})
+      assert model.find.calledWith({query: {}, page: 2 })
+      assert model.find.called
+      done()

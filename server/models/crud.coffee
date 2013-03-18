@@ -1,3 +1,4 @@
+util = require 'util'
 module.exports = (Resource) ->
 
   find = (options, callback) ->
@@ -38,15 +39,20 @@ module.exports = (Resource) ->
               #safe because max >= 1
               pageCount = Math.ceil(count/max)
               callback null, results, pageCount
-
-  findById = (id, callback) ->
-    Resource.findOne { _id : id}, (err, resource) ->
+ 
+  findOneBy = (key, value, callback) ->
+    params = {}
+    params[key] = value
+    Resource.findOne params, (err, resource) ->
       if err
         callback err
       else if resource
         callback err, resource
       else
-        callback 'Cannot find ' + Resource.modelName + ' with id: ' + id
+        callback 'Cannot find ' + Resource.name + ' with ' + key + ': ' + value
+  
+  findById = (id, callback) ->
+    findOneBy '_id',id, callback
 
   create = (json, callback) ->
     obj = new Resource json
@@ -54,9 +60,9 @@ module.exports = (Resource) ->
       if err
         callback err
       else if resource
-        callback err, resource
+        callback null, resource
       else
-        callback Resource.modelName + ' could not be saved'
+        callback Resource.name + ' could not be saved'
 
   update = (id, json, callback) ->
     Resource.findByIdAndUpdate(id, json, callback)
@@ -71,6 +77,7 @@ module.exports = (Resource) ->
 
   find: find
   findById: findById
+  findOneBy: findOneBy
   create: create
   update: update
   destroy: destroy

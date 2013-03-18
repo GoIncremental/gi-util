@@ -8,7 +8,7 @@ describe 'Crud Model', ->
   
   resource =
     find: -> this
-    name: 'bob'
+    name: 'bobby'
     findByIdAndUpdate: ->
     findOne: -> this
     sort: -> this
@@ -23,7 +23,7 @@ describe 'Crud Model', ->
   
   it 'Has a name', (done) ->
     crud = models.crud resource
-    crud.name.should.equal 'bob'
+    crud.name.should.equal resource.name
     done()
 
   it 'passes on the query to find', (done) ->
@@ -229,3 +229,64 @@ describe 'Crud Model', ->
     crud.update('123',{some: 'bad json'}, spy)
     assert spy.calledWith('error')
     done()
+
+  it 'aliases findOneBy with findById', (done) ->
+    stub = sinon.stub resource, 'findOne'
+    stub.callsArgWith(1,null,{})
+
+    spy = sinon.spy()
+    crud = models.crud resource
+    crud.findById '123', spy
+
+    assert stub.calledWith({'_id': '123'}), "findOne not called correctly"
+    assert spy.called, "callback spy not called"
+    
+    stub.restore()
+
+    done()
+
+  it 'returns errors from findOneBy', (done) ->
+    stub = sinon.stub resource, 'findOne'
+    stub.callsArgWith(1,"some error",{})
+
+    spy = sinon.spy()
+
+    crud = models.crud resource
+    crud.findOneBy 'bob', '123', spy
+
+    assert spy.calledWithExactly('some error'), "callback spy not called correctly"
+    
+    stub.restore()
+    done()
+
+  it 'returns error if nothing found', (done) ->
+    stub = sinon.stub resource, 'findOne'
+    stub.callsArgWith(1,null)
+
+    spy = sinon.spy()
+
+    crud = models.crud resource
+    crud.findOneBy 'bob', '123', spy
+
+    assert spy.calledWithExactly('Cannot find ' + resource.name + ' with bob: 123'), "callback spy not called correctly"
+    
+    stub.restore()
+    done()
+
+  it 'returns object if found', (done) ->
+    stub = sinon.stub resource, 'findOne'
+    stub.callsArgWith(1,null,{bob:"123"})
+
+    spy = sinon.spy()
+
+    crud = models.crud resource
+    crud.findOneBy 'bob', '123', spy
+
+    assert stub.calledWith({'bob': '123'}), "findOne not called correctly"
+    assert spy.calledWithExactly(null, {bob: '123'}), "callback spy not called correctly"
+    
+    stub.restore()
+    done()
+
+
+

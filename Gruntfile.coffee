@@ -5,17 +5,13 @@ module.exports = (grunt) ->
 
     clean:
       reset:
-        src: ['dist','testbin']
+        src: ['bin']
       temp:
         src: ['temp']
 
     coffeeLint: 
       scripts:
         files: [
-          {
-            expand: true
-            src: ['client/**/*.coffee', '!client/js/components/**']
-          }
           {
             expand: true
             src: ['server/**/*.coffee']
@@ -40,92 +36,51 @@ module.exports = (grunt) ->
             level: 'error'
           no_plusplus: 
             level: 'error'
-    coffee:
-      scripts:
-        expand: true
-        cwd: 'client'
-        src: ['**/*.coffee']
-        dest: 'temp/client/'
-        ext: '.js'
-        options:
-          bare: true
-      tests:
-        expand: true
-        cwd: 'test'
-        src: ['**/*.coffee']
-        dest: 'temp/test/'
-        ext: '.js'
-        options:
-          bare: true
 
-    copy:
-      server:
-        expand: true
-        cwd: 'server'
-        src: '**'
-        dest: 'temp/server/'
-      conf:
-        src: ['.npmignore', 'component.json', 'package.json', 'README.md']
-        dest: 'temp/'
-      dist:
-        expand: true
-        cwd: 'temp/'
-        src: ['**', '!*.coffee', '!test/**']
-        dest: 'dist'      
-      test:
-        expand: true
-        cwd: 'temp/'
-        src: ['**']
-        dest: 'testbin'     
-
-    requirejs:
-      scripts:
-        options:
-          baseUrl: 'temp/client/'
-          findNestedDependencies: true
-          logLevel: 0
-          mainConfigFile: 'temp/client/main.js'
-          name: 'main'
-          onBuildWrite: (moduleName, path, contents) ->
-            modulesToExclude = ['main']
-            shouldExcludeModule = modulesToExclude.indexOf(moduleName) >= 0
-
-            if (shouldExcludeModule)
-              return ''
-
-            return contents
-          optimize: 'none'
-          out: './client/index.js'
-          preserveLicenseComments: false
-          skipModuleInsertion: true
-          uglify:
-            no_mangle: false
     watch:
-      mochatests:
-        files: ['server/**/*.coffee', 'test/server/**/*.coffee']
+      dev:
+        files: ['server/**']
         tasks: ['default']
+      mochaTests:
+        files: ['test/server/**/*.coffee']
+        tasks: ['coffeeLint:tests', 'mocha:unit']
 
     mocha:
-      all:
+      unit:
         expand: true
-        src: ['test/server/_helper.js', 'testbin/test/server/**/*_test.js']
+        src: ['test/server/**/*_test.coffee']
         options:
           globals: ['should']
           timeout: 3000
           ignoreLeaks: false
           ui: 'bdd'
           reporter: 'spec'
+          growl: true
+      travis:
+        expand: true
+        src: ['test/server/**/*_test.coffee']
+        options:
+          globals: ['should']
+          timeout: 3000
+          ignoreLeaks: false
+          reporter: 'dot'   
 
   grunt.loadNpmTasks 'grunt-gint'
   grunt.loadNpmTasks 'grunt-contrib-clean'
-  grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-gint'
 
+  grunt.registerTask 'build'
+  , ['clean', 'coffeeLint']
+
   grunt.registerTask 'default'
-  , ['clean', 'coffeeLint', 'coffee', 'copy', 'clean:temp', 'mocha']
+  , ['build', 'mocha:unit']
+
+  grunt.registerTask 'travis'
+  , ['build', 'mocha:travis']
 
   grunt.registerTask 'run'
-  , ['default', 'watch']
+  , [ 'default', 'watch']

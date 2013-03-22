@@ -1,10 +1,10 @@
 {
   "author": "David Bochenski",
   "name": "gint-util",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "./server/index.coffee",
   "scripts": {
-    "test": "grunt"
+    "test": "grunt travis"
   },
   "dependencies": {
     "coffee-script": "~1.4.0",

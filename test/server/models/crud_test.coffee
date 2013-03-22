@@ -254,7 +254,8 @@ describe 'Crud Model', ->
     crud = models.crud resource
     crud.findOneBy 'bob', '123', spy
 
-    assert spy.calledWithExactly('some error'), "callback spy not called correctly"
+    assert spy.calledWithExactly('some error')
+    , "callback spy not called correctly"
     
     stub.restore()
     done()
@@ -268,7 +269,8 @@ describe 'Crud Model', ->
     crud = models.crud resource
     crud.findOneBy 'bob', '123', spy
 
-    assert spy.calledWithExactly('Cannot find ' + resource.name + ' with bob: 123'), "callback spy not called correctly"
+    assert spy.calledWithExactly('Cannot find ' +
+    resource.modelName + ' with bob: 123'), "callback spy not called correctly"
     
     stub.restore()
     done()
@@ -283,7 +285,8 @@ describe 'Crud Model', ->
     crud.findOneBy 'bob', '123', spy
 
     assert stub.calledWith({'bob': '123'}), "findOne not called correctly"
-    assert spy.calledWithExactly(null, {bob: '123'}), "callback spy not called correctly"
+    assert spy.calledWithExactly(null, {bob: '123'})
+    , "callback spy not called correctly"
     
     stub.restore()
     done()

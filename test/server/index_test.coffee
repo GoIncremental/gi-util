@@ -2,7 +2,7 @@ should = require 'should'
 mongoose = require 'mongoose'
 path = require 'path'
 
-dir =  path.normalize __dirname + '../../../..'
+dir =  path.normalize __dirname + '../../..'
 index = require dir + '/server'
 
 describe 'NPM Module Exports', ->

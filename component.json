@@ -1,5 +1,0 @@
-{
-  "name": "gint-util",
-  "version": "0.1.9",
-  "main": "./client/index.js"
-}

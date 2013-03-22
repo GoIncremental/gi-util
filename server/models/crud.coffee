@@ -49,7 +49,8 @@ module.exports = (Resource) ->
       else if resource
         callback err, resource
       else
-        callback 'Cannot find ' + Resource.name + ' with ' + key + ': ' + value
+        callback 'Cannot find ' +
+        Resource.modelName + ' with ' + key + ': ' + value
   
   findById = (id, callback) ->
     findOneBy '_id',id, callback

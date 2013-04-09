@@ -40,6 +40,7 @@ describe 'Crud Controller', ->
           result.should.have.property 'error', 'no body'
           done()
       crudController.create(req,res)
+      
   describe 'Update', ->
     it 'returns model as json with OK Status', (done) ->
       req =
@@ -64,7 +65,7 @@ describe 'Crud Controller', ->
         should.not.exist err
         result.should.equal req.body
         done()
-        
+
     it 'returns invalid request if params id is not defined', (done) ->
       req =
         params: {}

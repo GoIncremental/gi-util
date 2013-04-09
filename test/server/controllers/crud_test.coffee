@@ -20,7 +20,17 @@ describe 'Crud Controller', ->
           result.should.equal req.body
           done()
       crudController.create(req,res)
-
+    it 'invokes callback if given', (done) ->
+      req =
+        body:
+          id: 'toto'
+      res =
+        json: (code, result) ->
+          assert false
+      crudController.create req, res, (err, result) ->
+        should.not.exist err
+        result.should.equal req.body
+        done()
     it 'returns error and 500 Status if no body', (done) ->
       req =
         body: null
@@ -42,7 +52,19 @@ describe 'Crud Controller', ->
           result.should.equal req.body
           done()
       crudController.update(req,res)
-
+    it 'invokes callback if given', (done) ->
+      req =
+        params:
+          id: 'toto'
+        body: {}
+      res =
+        json: (code, result) ->
+          assert false
+      crudController.update req, res, (err, result) ->
+        should.not.exist err
+        result.should.equal req.body
+        done()
+        
     it 'returns invalid request if params id is not defined', (done) ->
       req =
         params: {}
@@ -123,6 +145,18 @@ describe 'Crud Controller', ->
           done()
       crudController.show(req,res)
 
+    it 'invokes callback if given', (done) ->
+      req =
+        params:
+          id: 'validId'
+      res =
+        json: (code, result) ->
+          assert false
+      crudController.show req, res, (err, result) ->
+        should.not.exist(err)
+        result._id.should.equal req.params.id
+        done()
+
     it 'returns 404 Status if no params', (done) ->
       req =
         params: null
@@ -177,6 +211,19 @@ describe 'Crud Controller', ->
           result.length.should.equal 4
           done()
       crudController.index(req,res)
+
+    it 'invokes callback if given', (done) ->
+      req =
+        query:
+          max: 4
+      res =
+        json: (code, result) ->
+          assert false
+      crudController.index req, res, (err, result) ->
+        should.not.exist err
+        result.length.should.equal 4
+        done()
+
     it 'returns empy array as json with OK Status if negative max', (done) ->
       req =
         query:

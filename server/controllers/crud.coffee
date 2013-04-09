@@ -1,12 +1,15 @@
 module.exports = (model) ->
 
-  create = (req, res) ->
+  create = (req, res, callback) ->
     model.create req.body, (err, obj) ->
       if err
         res.json 500, {error: err.toString()}
       else
-        res.json 200, obj
-  update = (req, res) ->
+        if callback
+          callback null, obj
+        else
+          res.json 200, obj
+  update = (req, res, callback) ->
     if req.params.id
 
       # wierdly, mongoose doesn't work if you put an id
@@ -19,7 +22,10 @@ module.exports = (model) ->
         if err
           res.json 400
         else
-          res.json 200, obj
+          if callback
+            callback null, obj
+          else
+            res.json 200, obj
     else
       res.json 400
 
@@ -33,19 +39,22 @@ module.exports = (model) ->
     else
       res.json 404
 
-  read = (req, res) ->
+  show = (req, res, callback) ->
     if req.params?.id
       model.findById req.params.id, (err, obj) ->
         if err
           res.json 404
         else if obj
-          res.json 200, obj
+          if callback
+            callback null, obj
+          else
+            res.json 200, obj
         else
           res.json 404
     else
       res.json 404
 
-  index = (req, res) ->
+  index = (req, res, callback) ->
    
     options =
       query: {}
@@ -66,13 +75,16 @@ module.exports = (model) ->
 
     model.find options
     , (err, result, pageCount) ->
-      if err
-        res.json 404, err
+      if callback
+        callback err, result
       else
-        res.json 200, result
+        if err
+          res.json 404, err
+        else
+          res.json 200, result
 
   index: index
   create: create
-  show: read
+  show: show
   update: update
   destroy: destroy

@@ -1,4 +1,3 @@
-util = require 'util'
 module.exports = (Resource) ->
 
   find = (options, callback) ->

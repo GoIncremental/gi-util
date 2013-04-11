@@ -36,8 +36,11 @@ module.exports = (model) ->
         if err
           res.json 404
         else
-          res.gintResult = 'Ok'
-          next()
+          if next
+            res.gintResult = 'Ok'
+            next()
+          else
+            res.json 200
     else
       res.json 404
 

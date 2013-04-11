@@ -20,16 +20,15 @@ describe 'Crud Controller', ->
           result.should.equal req.body
           done()
       crudController.create(req,res)
-    it 'invokes callback if given', (done) ->
+    it 'invokes next if given', (done) ->
       req =
         body:
           id: 'toto'
       res =
         json: (code, result) ->
           assert false
-      crudController.create req, res, (err, result) ->
-        should.not.exist err
-        result.should.equal req.body
+      crudController.create req, res, () ->
+        res.gintResult.should.equal req.body
         done()
     it 'returns error and 500 Status if no body', (done) ->
       req =
@@ -61,9 +60,8 @@ describe 'Crud Controller', ->
       res =
         json: (code, result) ->
           assert false
-      crudController.update req, res, (err, result) ->
-        should.not.exist err
-        result.should.equal req.body
+      crudController.update req, res, () ->
+        res.gintResult.should.equal req.body
         done()
 
     it 'returns invalid request if params id is not defined', (done) ->
@@ -113,7 +111,16 @@ describe 'Crud Controller', ->
           should.not.exist result
           done()
       crudController.destroy(req,res)
-
+    it 'invoikes callback if given', (done) ->
+      req =
+        params:
+          id: 'validId'
+      res =
+        json: (code, result) ->
+          assert false
+      crudController.destroy req, res, () ->
+        res.gintResult.should.equal 'Ok'
+        done()
     it 'returns 404 Status if no params', (done) ->
       req =
         params: null
@@ -153,9 +160,8 @@ describe 'Crud Controller', ->
       res =
         json: (code, result) ->
           assert false
-      crudController.show req, res, (err, result) ->
-        should.not.exist(err)
-        result._id.should.equal req.params.id
+      crudController.show req, res, () ->
+        res.gintResult._id.should.equal req.params.id
         done()
 
     it 'returns 404 Status if no params', (done) ->
@@ -220,9 +226,8 @@ describe 'Crud Controller', ->
       res =
         json: (code, result) ->
           assert false
-      crudController.index req, res, (err, result) ->
-        should.not.exist err
-        result.length.should.equal 4
+      crudController.index req, res, () ->
+        res.gintResult.length.should.equal 4
         done()
 
     it 'returns empy array as json with OK Status if negative max', (done) ->

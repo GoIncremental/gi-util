@@ -1,15 +1,15 @@
 module.exports = (model) ->
-
-  create = (req, res, callback) ->
+  create = (req, res, next) ->
     model.create req.body, (err, obj) ->
       if err
         res.json 500, {error: err.toString()}
       else
-        if callback
-          callback null, obj
+        if next
+          res.gintResult = obj
+          next()
         else
           res.json 200, obj
-  update = (req, res, callback) ->
+  update = (req, res, next) ->
     if req.params.id
 
       # wierdly, mongoose doesn't work if you put an id
@@ -22,31 +22,34 @@ module.exports = (model) ->
         if err
           res.json 400
         else
-          if callback
-            callback null, obj
+          if next
+            res.gintResult = obj
+            next()
           else
             res.json 200, obj
     else
       res.json 400
 
-  destroy = (req, res) ->
+  destroy = (req, res, next) ->
     if req.params?.id
       model.destroy req.params.id, (err) ->
         if err
           res.json 404
         else
-          res.json 200
+          res.gintResult = 'Ok'
+          next()
     else
       res.json 404
 
-  show = (req, res, callback) ->
+  show = (req, res, next) ->
     if req.params?.id
       model.findById req.params.id, (err, obj) ->
         if err
           res.json 404
         else if obj
-          if callback
-            callback null, obj
+          if next
+            res.gintResult = obj
+            next()
           else
             res.json 200, obj
         else
@@ -54,7 +57,7 @@ module.exports = (model) ->
     else
       res.json 404
 
-  index = (req, res, callback) ->
+  index = (req, res, next) ->
    
     options =
       query: {}
@@ -75,14 +78,16 @@ module.exports = (model) ->
 
     model.find options
     , (err, result, pageCount) ->
-      if callback
-        callback err, result
+      if err
+        res.json 404, err
       else
-        if err
-          res.json 404, err
+        if next
+          res.gintResult = result
+          next()
         else
           res.json 200, result
 
+  name: model.name
   index: index
   create: create
   show: show

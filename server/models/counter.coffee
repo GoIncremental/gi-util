@@ -1,5 +1,7 @@
+_ = require 'underscore'
+
 module.exports =
- 
+  
   getNext: (mongoose, name, callback) ->
     counter = mongoose.model 'Counters'
     counter.findOneAndUpdate {name: name}
@@ -9,8 +11,9 @@ module.exports =
       callback(null, res.number) if callback
 
   loadSchema: (mongoose) ->
-    Schema = mongoose.Schema
-    ObjectId = Schema.Types.ObjectId
     name = 'Counters'
-    counterSchema = new Schema {name: 'String', number: 'Number' }
-    mongoose.model name, counterSchema
+    if not _.contains(mongoose.modelNames(), name)
+      Schema = mongoose.Schema
+      ObjectId = Schema.Types.ObjectId
+      counterSchema = new Schema {name: 'String', number: 'Number' }
+      mongoose.model name, counterSchema

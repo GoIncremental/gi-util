@@ -2,3 +2,4 @@ node_modules/
 bin/
 testbin/
 .DS_Store
+temp/

@@ -1,0 +1,4 @@
+require [
+  '../common/timePatterns'
+], () ->
+  return

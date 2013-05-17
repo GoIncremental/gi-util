@@ -36,7 +36,24 @@ module.exports = (grunt) ->
             level: 'error'
           no_plusplus: 
             level: 'error'
-
+    
+    coffee:
+      client:
+        expand: true
+        cwd: 'client'
+        src: ['**/*.coffee']
+        dest: 'temp/client/'
+        ext: '.js'
+        options:
+          bare: true
+      common:
+        expand: true
+        cwd: 'common'
+        src: ['**/*.coffee']
+        dest: 'temp/common/'
+        ext: '.js'
+        options:
+          bare: true
     watch:
       dev:
         files: ['server/**']
@@ -48,7 +65,7 @@ module.exports = (grunt) ->
     mocha:
       unit:
         expand: true
-        src: ['test/server/**/*_test.coffee']
+        src: ['test/server/**/*_test.coffee', 'test/**/*Spec.coffee']
         options:
           globals: ['should']
           timeout: 3000
@@ -65,16 +82,38 @@ module.exports = (grunt) ->
           ignoreLeaks: false
           reporter: 'dot'   
 
+    requirejs:
+      scripts:
+        options:
+          baseUrl: 'temp/client/'
+          findNestedDependencies: true
+          logLevel: 0
+          mainConfigFile: 'temp/client/main.js'
+          name: 'main'
+          onBuildWrite: (moduleName, path, contents) ->
+            modulesToExclude = ['main']
+            shouldExcludeModule = modulesToExclude.indexOf(moduleName) >= 0
+
+            if (shouldExcludeModule)
+              return ''
+
+            return contents
+          optimize: 'none'
+          out: 'bin/gint-util.js'
+          preserveLicenseComments: false
+          skipModuleInsertion: true
+          uglify:
+            no_mangle: false
+
   grunt.loadNpmTasks 'grunt-gint'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-requirejs'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-copy'
-  grunt.loadNpmTasks 'grunt-gint'
+  grunt.loadNpmTasks 'grunt-contrib-requirejs'
 
   grunt.registerTask 'build'
-  , ['clean', 'coffeeLint']
+  , ['clean', 'coffeeLint', 'coffee', 'requirejs']
 
   grunt.registerTask 'default'
   , ['build', 'mocha:unit']

@@ -20,7 +20,7 @@ module.exports = (model) ->
 
       model.update req.params.id, payload, (err, obj) ->
         if err
-          res.json 400
+          res.json 400, {message: err}
         else
           if next
             res.gintResult = obj
@@ -28,7 +28,7 @@ module.exports = (model) ->
           else
             res.json 200, obj
     else
-      res.json 400
+      res.json 400, {message: 'No Id specified'}
 
   destroy = (req, res, next) ->
     if req.params?.id

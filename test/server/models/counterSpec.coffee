@@ -22,3 +22,7 @@ describe 'Counter Model', ->
       should.not.exist.err
       res.should.equal 2
       done()
+      
+  after (done) ->
+    dropCountersCollection()
+    done()

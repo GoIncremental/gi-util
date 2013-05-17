@@ -2,6 +2,7 @@ should = require 'should'
 path = require 'path'
 sinon = require 'sinon'
 assert = require 'assert'
+expect = require('chai').expect
 
 dir =  path.normalize __dirname + '../../../../server'
 
@@ -16,8 +17,8 @@ describe 'Crud Controller', ->
           id: 'toto'
       res =
         json: (code, result) ->
-          code.should.equal 200
-          result.should.equal req.body
+          expect(code).to.equal 200
+          expect(result).to.deep.equal req.body
           done()
       crudController.create(req,res)
     it 'invokes next if given', (done) ->
@@ -70,8 +71,8 @@ describe 'Crud Controller', ->
         body: {}
       res =
         json: (code, result) ->
-          code.should.equal 400
-          should.not.exist result
+          expect(code).to.equal 400
+          expect(result).to.have.property 'message', 'No Id specified'
           done()
       crudController.update(req,res)
 
@@ -82,8 +83,8 @@ describe 'Crud Controller', ->
         body: {}
       res =
         json: (code, result) ->
-          code.should.equal 400
-          should.not.exist result
+          expect(code).to.equal 400
+          expect(result).to.have.property 'message', 'Fail'
           done()
       crudController.update(req,res)
     it 'removes _id on update if it exists on body', (done) ->

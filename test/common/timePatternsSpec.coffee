@@ -47,7 +47,8 @@ describe 'timePatterns', ->
       testTime = moment().subtract('weeks',2)
       .startOf('week').add 'seconds', 788
 
-      tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly', (err, output1) ->
+      tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
+      , (err, output1) ->
         expect(output1).to.equal 788
         done()
 
@@ -58,11 +59,12 @@ describe 'timePatterns', ->
       tests = []
       
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly', (err, output1) ->
+        tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
+        , (err, output1) ->
           expect(output1).to.equal 788 + 2 * 3600
           cb()
 
-      tests.push (cb) -> 
+      tests.push (cb) ->
         tp.timeOnBetween startOfWeek, testTime, [3600,0], 'weekly'
         , (err, output2) ->
           expect(output2).to.equal 0

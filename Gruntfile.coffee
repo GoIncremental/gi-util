@@ -65,7 +65,7 @@ module.exports = (grunt) ->
     mocha:
       unit:
         expand: true
-        src: ['test/server/**/*_test.coffee', 'test/**/*Spec.coffee']
+        src: ['test/**/*Spec.coffee']
         options:
           globals: ['should']
           timeout: 3000

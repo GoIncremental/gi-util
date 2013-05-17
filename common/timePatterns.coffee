@@ -51,7 +51,7 @@ do (exports = (if exports? then exports else @['gintutil'] = {} )) ->
   # the console lines in, but commented out to aid any future debugging
   # as they proved quite helpful to see what's going on
   #
-  exports.timeOnBetween = (_start, _stop, pattern, recurrence, callback) ->
+  exports.timeOnBetween = (_start, _stop, pattern, recurrence) ->
     #clone the moments so we don't alter them for the calling function
     start = moment(_start)
     stop = moment(_stop)
@@ -136,10 +136,10 @@ do (exports = (if exports? then exports else @['gintutil'] = {} )) ->
 
     # console.log 'returning: ' + result
     # console.log ''
-    callback null, result
+    result
 
 
-  exports.timeAfterXSecondsOnFrom = (_start, x, pattern, recurrence, callback) ->
+  exports.timeAfterXSecondsOnFrom = (_start, x, pattern, recurrence) ->
     #clone the moments so we don't alter them for the calling function
     start = moment(_start)
     # console.log 'start: ' + start.toString()
@@ -205,4 +205,4 @@ do (exports = (if exports? then exports else @['gintutil'] = {} )) ->
 
     # console.log 'returning: ' + result
     # console.log ''
-    callback null, result
+    result

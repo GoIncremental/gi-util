@@ -17,28 +17,24 @@ describe 'timePatterns', ->
       tests = []
       
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
-        , (err, output) ->
-          expect(output).to.equal 788
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
+        expect(output).to.equal 788
+        cb()
       
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [3600, 0], 'weekly'
-        , (err, output) ->
-          expect(output).to.equal 0
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [3600, 0], 'weekly'
+        expect(output).to.equal 0
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [10,300], 'weekly'
-        , (err, output) ->
-          expect(output).to.equal 300
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [10,300], 'weekly'
+        expect(output).to.equal 300
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [10, 300, 10], 'weekly'
-        , (err, output) ->
-          expect(output).to.equal 768
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [10, 300, 10], 'weekly'
+        expect(output).to.equal 768
+        cb()
 
       async.parallel tests, done
 
@@ -47,10 +43,9 @@ describe 'timePatterns', ->
       testTime = moment().subtract('weeks',2)
       .startOf('week').add 'seconds', 788
 
-      tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
-      , (err, output1) ->
-        expect(output1).to.equal 788
-        done()
+      output = tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
+      expect(output).to.equal 788
+      done()
 
     it 'Handles intervals greater then the recurrence length', (done) ->
 
@@ -59,28 +54,24 @@ describe 'timePatterns', ->
       tests = []
       
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
-        , (err, output1) ->
-          expect(output1).to.equal 788 + 2 * 3600
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [0,3600], 'weekly'
+        expect(output).to.equal 788 + 2 * 3600
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [3600,0], 'weekly'
-        , (err, output2) ->
-          expect(output2).to.equal 0
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [3600,0], 'weekly'
+        expect(output).to.equal 0
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [10, 300], 'weekly'
-        , (err, output3) ->
-          expect(output3).to.equal 900
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [10, 300], 'weekly'
+        expect(output).to.equal 900
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween startOfWeek, testTime, [10, 300, 10], 'weekly'
-        , (err, output4) ->
-          expect(output4).to.equal 768 + 2 * 604780
-          cb()
+        output = tp.timeOnBetween startOfWeek, testTime, [10, 300, 10], 'weekly'
+        expect(output).to.equal 768 + 2 * 604780
+        cb()
       
       async.parallel tests, done
 
@@ -91,21 +82,21 @@ describe 'timePatterns', ->
       tests = []
       
       tests.push (cb) ->
-        tp.timeOnBetween start, stop, [0,3600,300], 'weekly', (err, output1) ->
-          expect(output1).to.equal 788
-          stop.add 'seconds', 1800
-          cb()
+        output = tp.timeOnBetween start, stop, [0,3600,300], 'weekly'
+        expect(output).to.equal 788
+        stop.add 'seconds', 1800
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween start, stop, [0,3600,300], 'weekly', (err, output2) ->
-          expect(output2).to.equal 1800 + 488
-          start.add 'seconds', 1800
-          cb()
+        output = tp.timeOnBetween start, stop, [0,3600,300], 'weekly'
+        expect(output).to.equal 1800 + 488
+        start.add 'seconds', 1800
+        cb()
 
       tests.push (cb) ->
-        tp.timeOnBetween start, stop, [0,3600,300], 'weekly', (err, output3) ->
-          expect(output3).to.equal 488
-          cb()
+        output = tp.timeOnBetween start, stop, [0,3600,300], 'weekly'
+        expect(output).to.equal 488
+        cb()
 
       async.series tests, done
 
@@ -118,27 +109,24 @@ describe 'timePatterns', ->
       correctAnswer = moment(start).add 'seconds', 3600 + 150
       
       tests.push (cb) ->
-        tp.timeAfterXSecondsOnFrom start, x,[3600, 300], 'weekly'
-        , (err, output) ->
-
-          expect(output.toString()).to.equal correctAnswer.toString()
-          start.add 'seconds', 1800
-          cb()
-      tests.push (cb) ->
-        tp.timeAfterXSecondsOnFrom start, x, [3600, 300], 'weekly'
-        , (err, output) ->
-          # should not change answer, as we've just pushed start further along
-          # an off period
-          expect(output.toString()).to.equal correctAnswer.toString()
-          x += 152
-          cb()
+        output = tp.timeAfterXSecondsOnFrom start, x,[3600, 300], 'weekly'
+        expect(output.toString()).to.equal correctAnswer.toString()
+        start.add 'seconds', 1800
+        cb()
 
       tests.push (cb) ->
-        tp.timeAfterXSecondsOnFrom start, x, [3600, 300], 'weekly'
-        , (err, output) ->
-          expect(output.toString()).to.equal moment(start)
-          .add('weeks',1).add('seconds', 1802 ).toString()
-          cb()
+        output = tp.timeAfterXSecondsOnFrom start, x, [3600, 300], 'weekly'
+        # should not change answer, as we've just pushed start further along
+        # an off period
+        expect(output.toString()).to.equal correctAnswer.toString()
+        x += 152
+        cb()
+
+      tests.push (cb) ->
+        output = tp.timeAfterXSecondsOnFrom start, x, [3600, 300], 'weekly'
+        expect(output.toString()).to.equal moment(start)
+        .add('weeks',1).add('seconds', 1802 ).toString()
+        cb()
 
       async.series tests, done
 
@@ -149,9 +137,8 @@ describe 'timePatterns', ->
       start = moment().startOf('week').add('days', 1)
       .add('hours', 14) #2pm Monday
       x = 540000
-      tp.timeAfterXSecondsOnFrom start, x, pattern, 'weekly'
-      , (err, output1) ->
-        correctAnswer = moment(start).add('weeks', 3).add('days', 3)
-        .add('hours', 22) #Midday 3 weeks on Friday
-        expect(output1.toString()).to.equal correctAnswer.toString()
-        done()
+      output = tp.timeAfterXSecondsOnFrom start, x, pattern, 'weekly'
+      correctAnswer = moment(start).add('weeks', 3).add('days', 3)
+      .add('hours', 22) #Midday 3 weeks on Friday
+      expect(output.toString()).to.equal correctAnswer.toString()
+      done()

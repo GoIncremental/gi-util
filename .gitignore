@@ -1,5 +1,7 @@
 node_modules/
 bin/
-testbin/
-.DS_Store
+!bin/gint-util.js
+coverage/
 temp/
+npm-debug.log
+.DS_Store

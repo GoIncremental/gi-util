@@ -1,5 +1,6 @@
 module.exports = (model) ->
   create = (req, res, next) ->
+    req.body.systemId = req.systemId
     model.create req.body, (err, obj) ->
       if err
         res.json 500, {error: err.toString()}
@@ -10,6 +11,7 @@ module.exports = (model) ->
         else
           res.json 200, obj
   update = (req, res, next) ->
+    req.body.systemId = req.systemId
     if req.params.id
 
       # wierdly, mongoose doesn't work if you put an id
@@ -78,6 +80,10 @@ module.exports = (model) ->
         options.page = v
       else
         options.query[k] = v
+
+    #Only return date for the system in question
+    console.log 'sytemId filtering'
+    options.query.systemId = req.systemId
 
     model.find options
     , (err, result, pageCount) ->

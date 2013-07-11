@@ -164,4 +164,240 @@ if (!(typeof exports !== "undefined" && exports !== null)) {
   };
 })((typeof exports !== "undefined" && exports !== null ? exports : this.gint.util.common['timePatterns'] = {}));
 
+
+angular.module('app').factory('Crud', [
+  '$resource', '$q', 'Socket', function($resource, $q, Socket) {
+    var factory;
+    factory = function(resourceName, usePromises) {
+      var all, allCached, allPromise, count, destroy, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
+      methods = {
+        query: {
+          method: 'GET',
+          params: {},
+          isArray: true
+        },
+        save: {
+          method: 'PUT',
+          params: {},
+          isArray: false
+        },
+        create: {
+          method: 'POST',
+          params: {},
+          isArray: false
+        }
+      };
+      resource = $resource('/api/' + resourceName + '/:id', {}, methods);
+      items = [];
+      itemsById = {};
+      updateMasterList = function(newItem) {
+        var replaced;
+        replaced = false;
+        angular.forEach(items, function(item, index) {
+          if (!replaced) {
+            if (newItem._id === item._id) {
+              replaced = true;
+              return items[index] = newItem;
+            }
+          }
+        });
+        if (!replaced) {
+          items.push(newItem);
+        }
+        itemsById[newItem._id] = newItem;
+      };
+      all = function(params, callback) {
+        var cacheable, options;
+        options = {};
+        cacheable = true;
+        if (_.isFunction(params)) {
+          callback = params;
+          if (items.length > 0) {
+            if (callback) {
+              callback(items);
+            }
+            return;
+          }
+        } else {
+          cacheable = false;
+          options = params;
+        }
+        return resource.query(options, function(results) {
+          if (cacheable) {
+            items = results;
+            angular.forEach(results, function(item, index) {
+              itemsById[item._id] = item;
+            });
+          }
+          if (callback) {
+            return callback(results);
+          }
+        });
+      };
+      allPromise = function(params) {
+        var deferred;
+        deferred = $q.defer();
+        if (params) {
+          all(params, function(results) {
+            return deferred.resolve(results);
+          });
+        } else {
+          all(function(results) {
+            return deferred.resolve(results);
+          });
+        }
+        return deferred.promise;
+      };
+      save = function(item, success) {
+        if (item._id) {
+          return resource.save({
+            id: item._id
+          }, item, function(result) {
+            updateMasterList(result);
+            if (success) {
+              return success(result);
+            }
+          });
+        } else {
+          return resource.create({}, item, function(result) {
+            updateMasterList(result);
+            if (success) {
+              return success(result);
+            }
+          });
+        }
+      };
+      savePromise = function(item) {
+        var deferred;
+        deferred = $q.defer();
+        save(item, function(res) {
+          return deferred.resolve(res);
+        });
+        return deferred.promise;
+      };
+      getCached = function(id) {
+        return itemsById[id];
+      };
+      allCached = function() {
+        return items;
+      };
+      get = function(id, callback) {
+        return resource.get({
+          id: id
+        }, function(item) {
+          if (items.length > 0) {
+            updateMasterList(item);
+          }
+          if (callback) {
+            return callback(item);
+          }
+        });
+      };
+      getPromise = function(id) {
+        var deferred;
+        deferred = $q.defer();
+        get(id, function(item) {
+          return deferred.resolve(item);
+        });
+        return deferred.promise;
+      };
+      destroy = function(id, callback) {
+        return resource["delete"]({
+          id: id
+        }, function() {
+          var removed;
+          removed = false;
+          delete itemsById[id];
+          angular.forEach(items, function(item, index) {
+            if (!removed) {
+              if (item._id === id) {
+                removed = true;
+                return items.splice(index, 1);
+              }
+            }
+          });
+          if (callback) {
+            return callback();
+          }
+        });
+      };
+      count = function() {
+        return items.length;
+      };
+      Socket.emit('watch:' + resourceName);
+      Socket.on(resourceName + '_created', function(data) {
+        updateMasterList(data);
+        return _version += 1;
+      });
+      Socket.on(resourceName + '_updated', function(data) {
+        updateMasterList(data);
+        return _version += 1;
+      });
+      _version = 0;
+      version = function() {
+        return _version;
+      };
+      exports = {
+        query: all,
+        all: all,
+        get: get,
+        getCached: getCached,
+        allCached: allCached,
+        destroy: destroy,
+        save: save,
+        count: count,
+        version: version
+      };
+      if (usePromises) {
+        exports.all = allPromise;
+        exports.query = allPromise;
+        exports.get = getPromise;
+        exports.save = savePromise;
+      }
+      return exports;
+    };
+    return {
+      factory: factory
+    };
+  }
+]);
+
+
+angular.module('app').factory('Socket', [
+  '$rootScope', function($rootScope) {
+    var socket;
+    if (typeof io !== "undefined" && io !== null) {
+      socket = io.connect();
+    }
+    return {
+      on: function(eventName, callback) {
+        if (typeof io !== "undefined" && io !== null) {
+          return socket.on(eventName, function() {
+            var args;
+            args = arguments;
+            if (callback) {
+              return $rootScope.$apply(function() {
+                return callback.apply(socket, args);
+              });
+            }
+          });
+        }
+      },
+      emit: function(eventName, data, callback) {
+        if (typeof io !== "undefined" && io !== null) {
+          return socket.emit(eventName, data, function() {
+            var args;
+            args = arguments;
+            if (callback) {
+              return $rootScope.$apply(function() {
+                return callback.apply(socket, args);
+              });
+            }
+          });
+        }
+      }
+    };
+  }
+]);
+
 ;

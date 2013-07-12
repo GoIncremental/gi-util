@@ -169,7 +169,7 @@ angular.module('app').factory('Crud', [
   '$resource', '$q', 'Socket', function($resource, $q, Socket) {
     var factory;
     factory = function(resourceName, usePromises) {
-      var all, allCached, allPromise, count, destroy, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
+      var all, allCached, allPromise, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
       methods = {
         query: {
           method: 'GET',
@@ -321,6 +321,14 @@ angular.module('app').factory('Crud', [
           }
         });
       };
+      destroyPromise = function(id) {
+        var deferred;
+        deferred = $q.defer();
+        destroy(id, function() {
+          return deferred.resolve();
+        });
+        return deferred.promise;
+      };
       count = function() {
         return items.length;
       };
@@ -353,6 +361,7 @@ angular.module('app').factory('Crud', [
         exports.query = allPromise;
         exports.get = getPromise;
         exports.save = savePromise;
+        exports.destroy = destroyPromise;
       }
       return exports;
     };

@@ -117,6 +117,12 @@ angular.module('app').factory 'Crud'
               
         callback() if callback
     
+    destroyPromise = (id) ->
+      deferred = $q.defer()
+      destroy id, () ->
+        deferred.resolve()
+      deferred.promise
+
     count = () ->
       items.length
 
@@ -150,6 +156,7 @@ angular.module('app').factory 'Crud'
       exports.query = allPromise
       exports.get = getPromise
       exports.save = savePromise
+      exports.destroy = destroyPromise
 
     exports
 

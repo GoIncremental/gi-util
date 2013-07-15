@@ -71,10 +71,12 @@ module.exports = (Resource) ->
     Resource.findOne { _id : id}, (err, resource) ->
       if err
         callback err
-      else
+      else if resource
         resource.remove (err) ->
           callback err
-
+      else
+        callback null
+  
   find: find
   findById: findById
   findOneBy: findOneBy

@@ -1,5 +1,11 @@
+common = require './common'
+
+configure = (app, mongoose) ->
+  common.extend app.models, require('./models')(mongoose)
+  common.extend app.controllers, require('./controllers')
+  common.extend app.middleware, require('./middleware')
+
 module.exports =
-  models: require './models'
-  controllers: require './controllers'
-  common: require './common'
+  common: common
   mocks: require '../test/server/mocks'
+  configure: configure

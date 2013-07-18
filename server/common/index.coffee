@@ -1,4 +1,10 @@
+extend = (object, properties) ->
+  for key, val of properties
+    object[key] = val
+  object
+
 module.exports =
+  extend: extend
   rest: require './rest'
-  middleware: require './middleware'
   timePatterns: require '../../common/timePatterns'
+  mongo: require './mongo'

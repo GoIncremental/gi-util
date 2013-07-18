@@ -82,7 +82,6 @@ module.exports = (model) ->
         options.query[k] = v
 
     #Only return date for the system in question
-    console.log 'sytemId filtering'
     options.query.systemId = req.systemId
 
     model.find options

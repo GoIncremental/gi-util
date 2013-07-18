@@ -1,25 +1,27 @@
 module.exports = (Resource) ->
 
   find = (options, callback) ->
-    if options? and options.max?
-      max = options.max
-    else
-      max = 10000
+    if options?
+      if options.max?
+        max = options.max
+      else
+        max = 10000
 
-    if options? and options.sort?
-      sort = options.sort
-    else
-      sort = {}
+      if options.sort?
+        sort = options.sort
+      else
+        sort = {}
 
-    if options? and options.page?
-      page = options.page
-    else
-      page = 1
+      if options.page?
+        page = options.page
+      else
+        page = 1
 
-    if options? and options.query?
-      query = options.query
-    else
-      query = {}
+      if options.query? and options.query.systemId?
+        query = options.query
+      else
+        callback('systemId not specified in query', null, 0) if callback
+        return
     
     skipFrom = page * max - max
 
@@ -39,46 +41,65 @@ module.exports = (Resource) ->
               pageCount = Math.ceil(count/max)
               callback null, results, pageCount
  
-  findOneBy = (key, value, callback) ->
-    params = {}
-    params[key] = value
-    Resource.findOne params, (err, resource) ->
-      if err
-        callback err
-      else if resource
-        callback err, resource
-      else
-        callback 'Cannot find ' +
-        Resource.modelName + ' with ' + key + ': ' + value
+  findOne = (query, callback) ->
+    if not query.systemId?
+      callback 'Cannot find ' + 
+      Resource.modelName + '- no SystemId', null
+    else
+      Resource.findOne query, (err, resource) ->
+        if err
+          callback err
+        else if resource
+          callback err, resource
+        else
+          callback 'Cannot find ' +
+          Resource.modelName
+
+  findOneBy = (key, value, systemId, callback) ->
+    query =
+      systemId: systemId
+    query[key] = value
+
+    findOne query, callback
   
-  findById = (id, callback) ->
-    findOneBy '_id',id, callback
+  findById = (id, systemId, callback) ->
+    findOneBy '_id',id, systemId, callback
 
   create = (json, callback) ->
-    obj = new Resource json
-    obj.save (err, resource) ->
-      if err
-        callback err
-      else if resource
-        callback null, resource
-      else
-        callback Resource.name + ' could not be saved'
+    if not json.systemId?
+      callback Resource.modelName  + ' could not be saved - no SystemId'
+    else
+      obj = new Resource json
+      obj.save (err, resource) ->
+        if err
+          callback err
+        else if resource
+          callback null, resource
+        else
+          callback Resource.name + ' could not be saved'
 
   update = (id, json, callback) ->
-    Resource.findByIdAndUpdate(id, json, callback)
+    if not json.systemId?
+      callback Resource.modelName + ' could not be updated - no systemId'
+    else
+      Resource.findByIdAndUpdate(id, json, callback)
 
-  destroy =  (id, callback) ->
-    Resource.findOne { _id : id}, (err, resource) ->
-      if err
-        callback err
-      else if resource
-        resource.remove (err) ->
+  destroy =  (id, systemId, callback) ->
+    if not systemId?
+      callback 'Could not destroy ' + Resource.modelName + ' - no systemId'
+    else
+      Resource.findOne { _id : id, systemId: systemId}, (err, resource) ->
+        if err
           callback err
-      else
-        callback null
+        else if resource
+          resource.remove (err) ->
+            callback err
+        else
+          callback null
   
   find: find
   findById: findById
+  findOne: findOne
   findOneBy: findOneBy
   create: create
   update: update

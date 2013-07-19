@@ -33,8 +33,8 @@ module.exports = (model) ->
       res.json 400, {message: 'No Id specified'}
 
   destroy = (req, res, next) ->
-    if req.params?.id and req.params?.systemId
-      model.destroy req.params.id, req.params.systemId, (err) ->
+    if req.params?.id and req.systemId
+      model.destroy req.params.id, req.systemId, (err) ->
         if err
           res.json 404
         else
@@ -47,8 +47,8 @@ module.exports = (model) ->
       res.json 404
 
   show = (req, res, next) ->
-    if req.params?.id and req.params?.systemId
-      model.findById req.params.id, req.params.systemId, (err, obj) ->
+    if req.params?.id and req.systemId
+      model.findById req.params.id, req.systemId, (err, obj) ->
         if err
           res.json 404
         else if obj

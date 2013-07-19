@@ -13,8 +13,8 @@ module.exports = (mongoose) ->
 
   counter = mongoose.model modelName, counterSchema
 
-  getNext: (name, callback) ->
-    counter.findOneAndUpdate {name: name}
+  getNext: (name, systemId, callback) ->
+    counter.findOneAndUpdate {name: name, systemId: systemId}
     , {$inc : {number: 1}}, {upsert: true}, (err, res) ->
       if err
         callback('error', null) if callback

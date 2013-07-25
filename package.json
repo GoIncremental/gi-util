@@ -10,7 +10,8 @@
     "coffee-script": "~1.4.0",
     "underscore": "~1.4.4",
     "moment": "~2.0.0",
-    "async": "~0.2.8"
+    "async": "~0.2.8",
+    "unorm": "~1.0.5"
   },
   "devDependencies": {
     "grunt": "0.4.0rc7",

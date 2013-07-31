@@ -63,7 +63,6 @@ module.exports = (model) ->
       res.json 404
 
   index = (req, res, next) ->
-   
     options =
       query: {}
 

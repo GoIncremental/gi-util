@@ -66,23 +66,29 @@ angular.module('app').factory 'Crud'
       
       deferred.promise
 
-    save = (item, success) ->
+    save = (item, success, fail) ->
       if item._id
         #we are updating
         resource.save {id: item._id}, item, (result) ->
           updateMasterList result
           success(result) if success
+        , (failure) ->
+          fail(result) if fail
 
       else
         #we are createing a new object on the server
         resource.create {}, item, (result) ->
           updateMasterList result
           success(result) if success
+        , (failure) ->
+          fail(failure) if fail
 
     savePromise = (item) ->
       deferred = $q.defer()
       save item, (res) ->
         deferred.resolve res
+      , (err) ->
+        deferred.reject err
 
       deferred.promise
 

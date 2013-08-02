@@ -116,7 +116,7 @@ module.exports = (grunt) ->
   , ['clean', 'coffeeLint', 'coffee', 'requirejs']
 
   grunt.registerTask 'default'
-  , ['build', 'mocha:unit']
+  , ['build']
 
   grunt.registerTask 'travis'
   , ['build', 'mocha:travis']

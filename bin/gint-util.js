@@ -248,7 +248,7 @@ angular.module('app').factory('Crud', [
         }
         return deferred.promise;
       };
-      save = function(item, success) {
+      save = function(item, success, fail) {
         if (item._id) {
           return resource.save({
             id: item._id
@@ -257,12 +257,20 @@ angular.module('app').factory('Crud', [
             if (success) {
               return success(result);
             }
+          }, function(failure) {
+            if (fail) {
+              return fail(result);
+            }
           });
         } else {
           return resource.create({}, item, function(result) {
             updateMasterList(result);
             if (success) {
               return success(result);
+            }
+          }, function(failure) {
+            if (fail) {
+              return fail(failure);
             }
           });
         }
@@ -272,6 +280,8 @@ angular.module('app').factory('Crud', [
         deferred = $q.defer();
         save(item, function(res) {
           return deferred.resolve(res);
+        }, function(err) {
+          return deferred.reject(err);
         });
         return deferred.promise;
       };

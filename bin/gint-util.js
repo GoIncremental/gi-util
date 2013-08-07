@@ -1,6 +1,5 @@
 
-
-if (!(typeof exports !== "undefined" && exports !== null)) {
+if (typeof exports === "undefined" || exports === null) {
   if (!this.gint) {
     this.gint = {};
   }
@@ -163,7 +162,6 @@ if (!(typeof exports !== "undefined" && exports !== null)) {
     return result;
   };
 })((typeof exports !== "undefined" && exports !== null ? exports : this.gint.util.common['timePatterns'] = {}));
-
 
 angular.module('app').factory('Crud', [
   '$resource', '$q', 'Socket', function($resource, $q, Socket) {
@@ -380,7 +378,6 @@ angular.module('app').factory('Crud', [
     };
   }
 ]);
-
 
 angular.module('app').factory('Socket', [
   '$rootScope', function($rootScope) {

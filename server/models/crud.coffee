@@ -43,7 +43,7 @@ module.exports = (Resource) ->
  
   findOne = (query, callback) ->
     if not query.systemId?
-      callback 'Cannot find ' + 
+      callback 'Cannot find ' +
       Resource.modelName + '- no SystemId', null
     else
       Resource.findOne query, (err, resource) ->

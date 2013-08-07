@@ -1,5 +1,3 @@
-should = require 'should'
-
 exports.create = (body, callback) ->
   if body
     callback null, body

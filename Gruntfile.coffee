@@ -62,22 +62,17 @@ module.exports = (grunt) ->
         files: ['test/server/**/*.coffee']
         tasks: ['coffeeLint:tests', 'mocha:unit']
 
-    mocha:
+    mochaTest:
       unit:
-        expand: true
         src: ['test/**/*Spec.coffee']
         options:
-          globals: ['should']
           timeout: 3000
           ignoreLeaks: false
           ui: 'bdd'
           reporter: 'spec'
-          growl: true
       travis:
-        expand: true
         src: ['test/server/**/*_test.coffee']
         options:
-          globals: ['should']
           timeout: 3000
           ignoreLeaks: false
           reporter: 'dot'   
@@ -111,6 +106,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
+  grunt.loadNpmTasks 'grunt-mocha-test'
 
   grunt.registerTask 'build'
   , ['clean', 'coffeeLint', 'coffee', 'requirejs']
@@ -119,7 +115,7 @@ module.exports = (grunt) ->
   , ['build']
 
   grunt.registerTask 'travis'
-  , ['build', 'mocha:travis']
+  , ['build', 'mochaTest:travis']
 
   grunt.registerTask 'run'
   , [ 'default', 'watch']

@@ -1,4 +1,14 @@
 module.exports = (Resource) ->
+  count = (query, callback) ->
+    if not query.systemId?
+      callback 'Cannot count ' +
+      Resource.modelName + '- no SystemId', null
+    else
+      Resource.count query, (err, count) ->
+        if err
+          callback 'could not count the results', -1
+        else
+          callback null, count
 
   find = (options, callback) ->
     if options?
@@ -105,3 +115,4 @@ module.exports = (Resource) ->
   update: update
   destroy: destroy
   name: Resource.modelName
+  count: count

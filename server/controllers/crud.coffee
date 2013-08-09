@@ -1,4 +1,26 @@
 module.exports = (model) ->
+
+  getOptions = (req) ->
+    options =
+      query:
+        systemId: req.systemId
+
+    for k,v of req.query
+      if k is 'max'
+        if not isNaN(v)
+          if v < 1
+            options.max = 0
+          else
+            options.max = v
+      else if k is 'sort'
+        options.sort = v
+      else if k is 'page'
+        options.page = v
+      else
+        options.query[k] = v
+
+    options
+
   create = (req, res, next) ->
     req.body.systemId = req.systemId
     model.create req.body, (err, obj) ->
@@ -63,25 +85,7 @@ module.exports = (model) ->
       res.json 404
 
   index = (req, res, next) ->
-    options =
-      query: {}
-
-    for k,v of req.query
-      if k is 'max'
-        if not isNaN(v)
-          if v < 1
-            options.max = 0
-          else
-            options.max = v
-      else if k is 'sort'
-        options.sort = v
-      else if k is 'page'
-        options.page = v
-      else
-        options.query[k] = v
-
-    #Only return date for the system in question
-    options.query.systemId = req.systemId
+    options = getOptions req
 
     model.find options
     , (err, result, pageCount) ->
@@ -94,8 +98,22 @@ module.exports = (model) ->
         else
           res.json 200, result
 
+  count = (req, res, next) ->
+    options = getOptions req
+    model.count options.query
+    , (err, result) ->
+      if err
+        res.json 404, err
+      else
+        if next
+          res.gintResult = {count: result}
+          next()
+        else
+          res.json 200, result
+
   name: model.name
   index: index
+  count: count
   create: create
   show: show
   update: update

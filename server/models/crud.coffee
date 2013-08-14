@@ -45,11 +45,11 @@ module.exports = (Resource) ->
         else
           Resource.count query, (err, count) ->
             if err
-              callback 'could not count the results', null, 0
+              callback('could not count the results', null, 0) if callback
             else
               #safe because max >= 1
               pageCount = Math.ceil(count/max)
-              callback null, results, pageCount
+              callback(null, results, pageCount) if callback
  
   findOne = (query, callback) ->
     if not query.systemId?
@@ -58,12 +58,11 @@ module.exports = (Resource) ->
     else
       Resource.findOne query, (err, resource) ->
         if err
-          callback err
+          callback(err) if callback
         else if resource
-          callback err, resource
+          callback(err, resource) if callback
         else
-          callback 'Cannot find ' +
-          Resource.modelName
+          callback('Cannot find ' + Resource.modelName) if callback
 
   findOneBy = (key, value, systemId, callback) ->
     query =
@@ -73,7 +72,7 @@ module.exports = (Resource) ->
     findOne query, callback
   
   findById = (id, systemId, callback) ->
-    findOneBy '_id',id, systemId, callback
+    findOneBy '_id', id, systemId, callback
 
   create = (json, callback) ->
     if not json.systemId?

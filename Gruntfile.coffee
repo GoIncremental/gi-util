@@ -72,7 +72,7 @@ module.exports = (grunt) ->
           ui: 'bdd'
           reporter: 'spec'
       travis:
-        src: ['test/server/**/*_test.coffee']
+        src: ['test/server/testSpec.coffee']
         options:
           globals: ['UNorm']
           timeout: 3000

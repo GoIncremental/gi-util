@@ -1,3 +1,3 @@
 module.exports = (mongoose) ->
-  crud: require('./crud')
+  crud: require './crud'
   counter: require('./counter')(mongoose)

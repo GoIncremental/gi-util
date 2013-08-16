@@ -32,11 +32,14 @@ module.exports = (Resource) ->
       else
         callback('systemId not specified in query', null, 0) if callback
         return
+    else
+      callback('options must be specfied for find', null, 0) if callback
+      return
     
     skipFrom = page * max - max
 
     if max < 1
-      callback(null, []) if callback
+      callback(null, [], 0) if callback
     else
       command = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
       command.exec (err, results) ->
@@ -48,13 +51,13 @@ module.exports = (Resource) ->
               callback('could not count the results', null, 0) if callback
             else
               #safe because max >= 1
-              pageCount = Math.ceil(count/max)
+              pageCount = Math.ceil(count/max) or 0
               callback(null, results, pageCount) if callback
  
   findOne = (query, callback) ->
-    if not query.systemId?
+    if not query? or not query.systemId?
       callback 'Cannot find ' +
-      Resource.modelName + '- no SystemId', null
+      Resource.modelName + ' - no SystemId', null
     else
       Resource.findOne query, (err, resource) ->
         if err
@@ -69,10 +72,10 @@ module.exports = (Resource) ->
       systemId: systemId
     query[key] = value
 
-    findOne query, callback
+    @findOne query, callback
   
   findById = (id, systemId, callback) ->
-    findOneBy '_id', id, systemId, callback
+    @findOneBy '_id', id, systemId, callback
 
   create = (json, callback) ->
     if not json.systemId?

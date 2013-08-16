@@ -64,8 +64,9 @@ module.exports = (grunt) ->
 
     mochaTest:
       unit:
-        src: ['test/**/*Spec.coffee']
+        src: ['test/server/testSpec.coffee']
         options:
+          globals: ['UNorm']
           timeout: 3000
           ignoreLeaks: false
           ui: 'bdd'
@@ -73,6 +74,7 @@ module.exports = (grunt) ->
       travis:
         src: ['test/server/**/*_test.coffee']
         options:
+          globals: ['UNorm']
           timeout: 3000
           ignoreLeaks: false
           reporter: 'dot'   
@@ -112,7 +114,7 @@ module.exports = (grunt) ->
   , ['clean', 'coffeeLint', 'coffee', 'requirejs']
 
   grunt.registerTask 'default'
-  , ['build']
+  , ['build', 'mochaTest:unit']
 
   grunt.registerTask 'travis'
   , ['build', 'mochaTest:travis']

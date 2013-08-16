@@ -98,12 +98,13 @@ module.exports = () ->
             res.json.reset()
             stubs['./helper'].getOptions.restore()
 
-          it 'gets options by passing req to helper.getOptions', (done) ->
+          it 'gets options by passing req and model to helper.getOptions'
+          , (done) ->
             mockModel.find.callsArg 1
 
             controller.index req, {}, () ->
-              assert stubs['./helper'].getOptions.calledWith(req)
-              , 'did not call helper.getOptions with req'
+              assert stubs['./helper'].getOptions.calledWith(req, mockModel)
+              , 'did not call helper.getOptions with req and /or model'
               done()
 
           it 'uses the options returned as the argument for model.find'
@@ -556,8 +557,8 @@ module.exports = () ->
             mockModel.count.callsArg 1
 
             controller.count req, {}, () ->
-              assert stubs['./helper'].getOptions.calledWith(req)
-              , 'did not call helper.getOptions with req'
+              assert stubs['./helper'].getOptions.calledWith(req, mockModel)
+              , 'did not call helper.getOptions with req and/or model'
               done()
 
           it 'uses the options.query returned as the argument for model.count'

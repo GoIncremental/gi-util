@@ -3,7 +3,7 @@ helper = require './helper'
 module.exports = (model) ->
 
   index = (req, res, next) ->
-    options = helper.getOptions req
+    options = helper.getOptions req, model
 
     model.find options
     , (err, result, pageCount) ->
@@ -80,7 +80,7 @@ module.exports = (model) ->
       res.json 404
 
   count = (req, res, next) ->
-    options = helper.getOptions req
+    options = helper.getOptions req, model
 
     model.count options.query
     , (err, result) ->

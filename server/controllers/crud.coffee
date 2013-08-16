@@ -1,25 +1,20 @@
+helper = require './helper'
+
 module.exports = (model) ->
 
-  getOptions = (req) ->
-    options =
-      query:
-        systemId: req.systemId
+  index = (req, res, next) ->
+    options = helper.getOptions req, model
 
-    for k,v of req.query
-      if k is 'max'
-        if not isNaN(v)
-          if v < 1
-            options.max = 0
-          else
-            options.max = v
-      else if k is 'sort'
-        options.sort = v
-      else if k is 'page'
-        options.page = v
+    model.find options
+    , (err, result, pageCount) ->
+      if err
+        res.json 404, err
       else
-        options.query[k] = v
-
-    options
+        if next
+          res.gintResult = result
+          next()
+        else
+          res.json 200, result
 
   create = (req, res, next) ->
     req.body.systemId = req.systemId
@@ -32,41 +27,6 @@ module.exports = (model) ->
           next()
         else
           res.json 200, obj
-  update = (req, res, next) ->
-    req.body.systemId = req.systemId
-    if req.params.id
-
-      # wierdly, mongoose doesn't work if you put an id
-      # in the update payload
-      payload = req.body
-      if req.body._id
-        delete payload._id
-
-      model.update req.params.id, payload, (err, obj) ->
-        if err
-          res.json 400, {message: err}
-        else
-          if next
-            res.gintResult = obj
-            next()
-          else
-            res.json 200, obj
-    else
-      res.json 400, {message: 'No Id specified'}
-
-  destroy = (req, res, next) ->
-    if req.params?.id and req.systemId
-      model.destroy req.params.id, req.systemId, (err) ->
-        if err
-          res.json 404
-        else
-          if next
-            res.gintResult = 'Ok'
-            next()
-          else
-            res.json 200
-    else
-      res.json 404
 
   show = (req, res, next) ->
     if req.params?.id and req.systemId
@@ -84,26 +44,48 @@ module.exports = (model) ->
     else
       res.json 404
 
-  index = (req, res, next) ->
-    options = getOptions req
+  update = (req, res, next) ->
+    if req.params?.id and req.systemId
+      req.body.systemId = req.systemId
+      # wierdly, mongoose doesn't work if you put an id
+      # in the update payload
+      payload = req.body
+      if req.body._id
+        delete payload._id
 
-    model.find options
-    , (err, result, pageCount) ->
-      if err
-        res.json 404, err
-      else
-        if next
-          res.gintResult = result
-          next()
+      model.update req.params.id, payload, (err, obj) ->
+        if err
+          res.json 400, {message: err}
         else
-          res.json 200, result
+          if next
+            res.gintResult = obj
+            next()
+          else
+            res.json 200, obj
+    else
+      res.json 400
+
+  destroy = (req, res, next) ->
+    if req.params?.id and req.systemId
+      model.destroy req.params.id, req.systemId, (err) ->
+        if err
+          res.json 400, {message: err}
+        else
+          if next
+            res.gintResult = 'Ok'
+            next()
+          else
+            res.json 200
+    else
+      res.json 404
 
   count = (req, res, next) ->
-    options = getOptions req
+    options = helper.getOptions req, model
+
     model.count options.query
     , (err, result) ->
       if err
-        res.json 404, err
+        res.json 404, {message: err}
       else
         if next
           res.gintResult = {count: result}
@@ -113,8 +95,8 @@ module.exports = (model) ->
 
   name: model.name
   index: index
-  count: count
   create: create
   show: show
   update: update
   destroy: destroy
+  count: count

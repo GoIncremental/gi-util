@@ -1,2 +1,4 @@
+sinon = require 'sinon'
 module.exports =
-  crud: require './crud'
+  mongoose: require './mongoose'
+  sinon: sinon

@@ -1,10 +1,11 @@
 module.exports =
 
-  getOptions: (req) ->
+  getOptions: (req, model) ->
     options =
       query:
         systemId: req.systemId
-    if req.gintFilter
+
+    if req.gintFilter?
       #are there any restrictions on this model
       if req.gintFilter[model.name]
         options.query._id = req.gintFilter[model.name]

@@ -60,7 +60,7 @@ module.exports = (grunt) ->
         tasks: ['default']
       mochaTests:
         files: ['test/server/**/*.coffee']
-        tasks: ['coffeeLint:tests', 'mocha:unit']
+        tasks: ['coffeeLint:tests', 'mochaTest:unit']
 
     mochaTest:
       unit:

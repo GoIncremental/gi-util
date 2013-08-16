@@ -1,7 +1,7 @@
 path = require 'path'
 sinon = require 'sinon'
 expect = require('chai').expect
-
+moment = require 'moment'
 dir =  path.normalize __dirname + '../../../../server'
 
 module.exports = () ->
@@ -121,4 +121,114 @@ module.exports = () ->
         options = getOptions req, model
         expect(options.query).to.have.property 'a', 'alice'
         expect(options.query).to.have.property 'b', 'bob'
+        done()
+
+      it 'looks for *and* delimiter', (done) ->
+        req.query =
+          a: '*and*'
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and).to.be.an 'array'
+        done()
+
+      it 'populates a multi term *and* delimited query', (done) ->
+        req.query =
+          a: 'jack*and*jill'
+        options = getOptions req, model
+
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and).to.be.an 'array'
+        expect(options.query.$and).to.deep.equal [{a: 'jack'}, {a: 'jill'}]
+        done()
+
+      it 'handles less than queries', (done) ->
+        req.query =
+          a: 'jack*and*lt|5'
+        
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$lt', '5'
+        done()
+      
+      it 'handles less than or equal queries', (done) ->
+        req.query =
+          a: 'jack*and*lte|6'
+        
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$lte', '6'
+        done()
+
+      it 'handles greater than queries', (done) ->
+        req.query =
+          a: 'jack*and*gt|7'
+        
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$gt', '7'
+        done()
+
+      it 'handles greater than or equal queries', (done) ->
+        req.query =
+          a: 'jack*and*gte|8'
+        
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$gte', '8'
+        done()
+
+      it 'handles less than date queries with YYYY-MM-DD format'
+      , (done) ->
+        req.query =
+          a: 'jack*and*ltdate|2013-08-09'
+
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$lt'
+        expect(moment(options.query.$and[1].a.$lt)
+        .isSame('2013-08-09')).to.be.true
+        done()
+
+      it 'handles less than date queries with YYYY-MM-DDTHH:mm:ss format'
+      , (done) ->
+        req.query =
+          a: 'jack*and*ltdate|2013-08-09T00:00:00'
+
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$lt'
+        expect(moment(options.query.$and[1].a.$lt)
+        .isSame('2013-08-09')).to.be.true
+        done()
+      
+      it 'handles greater than date queries with YYYY-MM-DD format'
+      , (done) ->
+        req.query =
+          a: 'jack*and*gtdate|2013-08-09'
+
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$gt'
+        expect(moment(options.query.$and[1].a.$gt)
+        .isSame('2013-08-09')).to.be.true
+        done()
+
+      it 'handles treater than date queries with YYYY-MM-DDTHH:mm:ss format'
+      , (done) ->
+        req.query =
+          a: 'jack*and*gtdate|2013-08-09T00:00:00'
+
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and[1].a).to.exist
+        expect(options.query.$and[1].a).to.have.property '$gt'
+        expect(moment(options.query.$and[1].a.$gt)
+        .isSame('2013-08-09')).to.be.true
         done()

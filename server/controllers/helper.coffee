@@ -1,3 +1,5 @@
+moment = require 'moment'
+
 module.exports =
 
   getOptions: (req, model) ->
@@ -29,6 +31,53 @@ module.exports =
       else if k is 'page'
         options.page = v
       else
-        options.query[k] = v
+        if v.indexOf('*and*') isnt -1
+          options.query.$and = []
+
+          splits = v.split '*and*'
+          splits.forEach (split) ->
+            if split.indexOf('|') isnt -1
+              splits2 = split.split '|'
+              switch splits2[0]
+                when "lt"
+                  obj = {}
+                  obj[k] =
+                    $lt: splits2[1]
+                  options.query.$and.push obj
+                when "ltdate"
+                  date = moment(splits2[1]
+                  , ["YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss"])
+                  obj = {}
+                  obj[k] =
+                    $lt: date
+                  options.query.$and.push obj
+                when "lte"
+                  obj = {}
+                  obj[k] =
+                    $lte: splits2[1]
+                  options.query.$and.push obj
+                when "gt"
+                  obj = {}
+                  obj[k] =
+                    $gt: splits2[1]
+                  options.query.$and.push obj
+                when "gtdate"
+                  date = moment(splits2[1]
+                  , ["YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss"])
+                  obj = {}
+                  obj[k] =
+                    $gt: date
+                  options.query.$and.push obj
+                when "gte"
+                  obj = {}
+                  obj[k] =
+                    $gte: splits2[1]
+                  options.query.$and.push obj
+            else
+              obj = {}
+              obj[k] = split
+              options.query.$and.push obj
+        else
+          options.query[k] = v
 
     options

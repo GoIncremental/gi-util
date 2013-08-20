@@ -36,5 +36,5 @@ module.exports = () ->
         expect(controllers.slug).to.have.property 'slug', "object"
         done()
     
-    describe 'Private Helpers', ->
+    describe 'Internal Helpers', ->
       helpers()

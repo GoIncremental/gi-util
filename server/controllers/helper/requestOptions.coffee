@@ -1,5 +1,6 @@
-module.exports =
+splitter = require './querySplitter'
 
+module.exports =
   getOptions: (req, model) ->
     options =
       query:
@@ -29,6 +30,13 @@ module.exports =
       else if k is 'page'
         options.page = v
       else
-        options.query[k] = v
+        if v.indexOf('*and*') isnt -1
+          splits = v.split '*and*'
+          options.query.$and = (x for x in splitter.processSplits(splits, k))
+        else if v.indexOf('*or*') isnt -1
+          splits = v.split '*or*'
+          options.query.$or = (x for x in splitter.processSplits(splits, k))
+        else
+          options.query[k] = splitter.processSplit v, k
 
     options

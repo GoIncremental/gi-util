@@ -1,25 +1,33 @@
 path = require 'path'
 sinon = require 'sinon'
 expect = require('chai').expect
+moment = require 'moment'
+dir =  path.normalize __dirname + '../../../../../server'
+proxyquire = require 'proxyquire'
 
-dir =  path.normalize __dirname + '../../../../server'
 
 module.exports = () ->
   
-  helper = require dir + '/controllers/helper'
+  stubs =
+    './querySplitter':
+      processSplits: sinon.stub().returns [ {a: '1'}, {a: '2'} ]
+      processSplit: sinon.stub().returnsArg 0
+
+  requestOptions = proxyquire dir + '/controllers/helper/requestOptions', stubs
+
   describe 'Exports', (done) ->
     
     it 'getOptions: Function', (done) ->
-      expect(helper).to.have.ownProperty 'getOptions'
-      expect(helper.getOptions).to.be.a 'function'
+      expect(requestOptions).to.have.ownProperty 'getOptions'
+      expect(requestOptions.getOptions).to.be.a 'function'
       done()
 
     describe 'getOptions: Function(req) -> {options}', ->
-      getOptions = helper.getOptions
+      getOptions = requestOptions.getOptions
       req = null
       model = null
       options = null
-
+      
       beforeEach (done) ->
         req =
           systemId: '123'
@@ -30,6 +38,10 @@ module.exports = () ->
         model =
           name: 'aModel'
 
+        done()
+      
+      afterEach (done) ->
+        stubs['./querySplitter'].processSplits.reset()
         done()
 
       it 'sets query.systemId to req.systemId', (done) ->
@@ -114,11 +126,56 @@ module.exports = () ->
         expect(options.page).to.equal req.query.page
         done()
 
-      it 'sets options.query to anything else given in req.query', (done) ->
+
+      it 'populates query.$or if query contains *or*', (done) ->
         req.query =
-          a: 'alice'
-          b: 'bob'
+          a: '1*or*2'
         options = getOptions req, model
-        expect(options.query).to.have.property 'a', 'alice'
-        expect(options.query).to.have.property 'b', 'bob'
+
+        expect(options.query).to.have.property '$or'
+        expect(options.query.$or).to.deep.equal [{a: '1'}, {a: '2'}]
+        done()
+
+      it 'calls processSplits with array of splits if query contains *or*'
+      , (done) ->
+        req.query =
+          a: 'jack*or*jill'
+              
+        options = getOptions req, model
+        expect(stubs['./querySplitter'].processSplits.called).to.be.true
+        expect(stubs['./querySplitter'].processSplits
+        .calledWith(['jack', 'jill'], 'a')).to.be.true
+        done()
+
+      it 'populates query.$and if query contains *and*', (done) ->
+        req.query =
+          a: '1*and*2'
+        
+        options = getOptions req, model
+        expect(options.query).to.have.property '$and'
+        expect(options.query.$and).to.deep.equal [{a: '1'}, {a: '2'}]
+        done()
+      
+      it 'calls processSplits with array of splits if query contains *and*'
+      , (done) ->
+        req.query =
+          b: 'alice*and*bob'
+
+        options = getOptions req, model
+        expect(stubs['./querySplitter'].processSplits.called).to.be.true
+        expect(stubs['./querySplitter'].processSplits
+        .calledWith(['alice', 'bob'], 'b')).to.be.true
+        done()
+
+
+      it 'calls processSplit if query does contains neither *and* nor *or*'
+      , (done) ->
+        req.query =
+          c: 'charlie'
+
+        options = getOptions req, model
+        expect(stubs['./querySplitter'].processSplits.called).to.be.false
+        expect(stubs['./querySplitter'].processSplit.called).to.be.true
+        expect(stubs['./querySplitter'].processSplit
+        .calledWith('charlie', 'c')).to.be.true
         done()

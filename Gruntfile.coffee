@@ -71,7 +71,7 @@ module.exports = (grunt) ->
           ignoreLeaks: false
           ui: 'bdd'
           reporter: 'spec'
-      travis:
+      ci:
         src: ['test/server/testSpec.coffee']
         options:
           globals: ['UNorm']
@@ -116,8 +116,8 @@ module.exports = (grunt) ->
   grunt.registerTask 'default'
   , ['build', 'mochaTest:unit']
 
-  grunt.registerTask 'travis'
-  , ['build', 'mochaTest:travis']
+  grunt.registerTask 'ci'
+  , ['build', 'mochaTest:ci']
 
   grunt.registerTask 'run'
   , [ 'default', 'watch']

@@ -71,13 +71,6 @@ module.exports = (grunt) ->
           ignoreLeaks: false
           ui: 'bdd'
           reporter: 'spec'
-      ci:
-        src: ['test/server/testSpec.coffee']
-        options:
-          globals: ['UNorm']
-          timeout: 3000
-          ignoreLeaks: false
-          reporter: 'dot'   
 
     requirejs:
       scripts:
@@ -117,7 +110,7 @@ module.exports = (grunt) ->
   , ['build', 'mochaTest:unit']
 
   grunt.registerTask 'ci'
-  , ['build', 'mochaTest:ci']
+  , ['default']
 
   grunt.registerTask 'run'
   , [ 'default', 'watch']

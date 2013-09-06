@@ -159,6 +159,85 @@ module.exports = () ->
             mockModel.create.restore()
             res.json.reset()
 
+          it 'checks to see if body is an array', (done) ->
+            req.body = []
+            controller.create req, res, () ->
+              expect(res.gintResult).to.be.an 'array'
+              expect(res.gintResult.length).to.equal 0
+            done()
+
+          it 'calls model create once for each object', (done) ->
+            alice = {alice: 'alice'}
+            bob = {bob: 'bob'}
+            req.body = [alice, bob]
+            mockModel.create.callsArgWith 1, null, null
+            controller.create req, res
+            expect(mockModel.create.calledTwice).to.be.true
+            done()
+
+          it 'returns error messages for any failed objects ' +
+          'together with sucess results', (done) ->
+            alice = {alice: 'alice'}
+            bob = {bob: 'bob'}
+            charlie = {charlie: 'charlie'}
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, "an error", null
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, null
+
+            controller.create req, res
+
+            expect(res.json.calledWith 500).to.be.true
+            expect(res.json.getCall(0).args[1]).to.deep.equal [
+              {message: "an error", obj: alice},
+              {message: "create failed for reasons unknown", obj: charlie},
+              {message: "ok", obj: bob}
+            ]
+
+            done()
+
+          it 'sets res.gintResult if all sucessfully inserted', (done) ->
+            alice = {alice: 'alice'}
+            bob = {bob: 'bob'}
+            charlie = {charlie: 'charlie'}
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResult).to.deep.equal [
+                {message: "ok", obj: alice},
+                {message: "ok", obj: bob},
+                {message: "ok", obj: charlie}
+              ]
+
+              done()
+
+          it 'calls res.json with 200 if no callback specified', (done) ->
+            alice = {alice: 'alice'}
+            bob = {bob: 'bob'}
+            charlie = {charlie: 'charlie'}
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res
+
+            expect(res.json.calledWith 200).to.be.true
+            expect(res.json.getCall(0).args[1]).to.deep.equal [
+              {message: "ok", obj: alice},
+              {message: "ok", obj: bob},
+              {message: "ok", obj: charlie}
+            ]
+
+            done()
+
           it 'sets req.body.systemId to the value given in req.systemId'
           , (done) ->
             mockModel.create.callsArgWith 1, null, null

@@ -20,7 +20,7 @@ module.exports = (model) ->
 
 
   create = (req, res, next) ->
-    if _.isArray(req.body)
+    if _.isArray req.body
       errors = []
       results = []
       async.each req.body, (obj, cb) ->
@@ -36,14 +36,15 @@ module.exports = (model) ->
             errors.push {message: "create failed for reasons unknown", obj: obj}
             cb()
       , () ->
+        resultCode = 200
         if errors.length > 0
-          res.json 500, errors.concat results
+          resultCode = 500
+        if next
+          res.gintResult = errors.concat results
+          res.gintResultCode = resultCode
+          next()
         else
-          if next
-            res.gintResult = results
-            next()
-          else
-            res.json 200, results
+          res.json resultCode, errors.concat results
 
     else
       req.body.systemId = req.systemId

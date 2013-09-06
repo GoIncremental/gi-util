@@ -33,6 +33,14 @@ module.exports = () ->
         count: ->
       
       controller = crud mockModel
+      alice = null
+      bob = null
+      charlie = null
+
+      beforeEach ->
+        alice = {alice: 'alice'}
+        bob = {bob: 'bob'}
+        charlie = {charlie: 'charlie'}
       
       describe 'returns an object with properties:', ->
         it 'name: String', (done) ->
@@ -167,8 +175,6 @@ module.exports = () ->
             done()
 
           it 'calls model create once for each object', (done) ->
-            alice = {alice: 'alice'}
-            bob = {bob: 'bob'}
             req.body = [alice, bob]
             mockModel.create.callsArgWith 1, null, null
             controller.create req, res
@@ -177,9 +183,6 @@ module.exports = () ->
 
           it 'returns error messages for any failed objects ' +
           'together with sucess results', (done) ->
-            alice = {alice: 'alice'}
-            bob = {bob: 'bob'}
-            charlie = {charlie: 'charlie'}
             req.body = [alice, bob, charlie]
 
             mockModel.create.callsArgWith 1, "an error", null
@@ -198,9 +201,7 @@ module.exports = () ->
             done()
 
           it 'sets res.gintResult if all sucessfully inserted', (done) ->
-            alice = {alice: 'alice'}
-            bob = {bob: 'bob'}
-            charlie = {charlie: 'charlie'}
+
             req.body = [alice, bob, charlie]
 
             mockModel.create.callsArgWith 1, null, alice
@@ -217,6 +218,30 @@ module.exports = () ->
 
               done()
 
+          it 'sets res.gintResultCode to 200 if sucessful', (done) ->
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResultCode).to.equal 200
+              done()
+
+          it 'sets res.gintResultCode to 500 if there are errors', (done) ->
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, "an error", bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResultCode).to.equal 500
+              done()
+            
           it 'calls res.json with 200 if no callback specified', (done) ->
             alice = {alice: 'alice'}
             bob = {bob: 'bob'}

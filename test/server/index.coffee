@@ -3,8 +3,6 @@ path = require 'path'
 sinon = require 'sinon'
 expect = require('chai').expect
 
-common = require '../common'
-
 module.exports = ->
 
   describe 'Exports', ->
@@ -32,5 +30,3 @@ module.exports = ->
     it 'configure: function() -> ', (done) ->
       expect(module).to.have.property 'configure'
       done()
-
-    common()

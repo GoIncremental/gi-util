@@ -1,3 +1,4 @@
+common = require '../common'
 module.exports = (mongoose) ->
-  crud: require './crud'
   counter: require('./counter')(mongoose)
+  timePatterns: require('./timePatterns')(mongoose, common.crudModelFactory)

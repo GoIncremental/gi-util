@@ -1,4 +1,4 @@
-helper = require './helper'
+helper = require '../controllers/helper'
 _ = require 'underscore'
 async = require 'async'
 

@@ -5,7 +5,7 @@ proxyquire = require 'proxyquire'
 path = require 'path'
 
 counter = require './counter'
-crud = require './crud'
+timePatterns = require './timePatterns'
 
 module.exports = () ->
   describe 'Models', ->
@@ -17,9 +17,8 @@ module.exports = () ->
       dir =  path.normalize __dirname + '../../../../server'
 
       stubs =
-        './crud':
-          name: 'crud'
         './counter': sinon.stub().returns {name: 'counter'}
+        './timePatterns': sinon.stub().returns {name: 'timePatterns'}
 
       mongooseMock = sinon.spy()
 
@@ -28,10 +27,6 @@ module.exports = () ->
       done()
 
     describe 'Exports', ->
-      it 'crud', (done) ->
-        assert.property models, 'crud', 'models does not export crud'
-        expect(models.crud.name).to.equal 'crud'
-        done()
 
       it 'counter', (done) ->
         assert.ok stubs['./counter'].calledOnce
@@ -40,6 +35,10 @@ module.exports = () ->
         assert.property models, 'counter', 'models does not export counter'
         expect(models.counter.name).to.equal 'counter'
         done()
+
+      it 'timePatterns', (done) ->
+        assert.ok stubs['./timePatterns'].calledOnce
+        done()
     
-    crud()
-    counter()
+      counter()
+      timePatterns()

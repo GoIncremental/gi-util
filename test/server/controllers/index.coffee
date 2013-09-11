@@ -5,36 +5,49 @@ sinon = require 'sinon'
 proxyquire = require 'proxyquire'
 path = require 'path'
 
-crud = require './crud'
 helpers = require './helper'
+
 module.exports = () ->
   describe 'Controllers', ->
-    controllers = null
+    controllersFactory = null
+    crudControllerFactory = null
     stubs = null
+    app =
+      models:
+        timePatterns: 'timePatterns'
 
     beforeEach (done) ->
       dir =  path.normalize __dirname + '../../../../server'
 
-      stubs =
-        './crud': {crud: "object"}
-        './slug': {slug: "object"}
+      crudControllerFactory = sinon.stub().returnsArg 0
 
-      controllers = proxyquire(dir + '/controllers', stubs)
+      stubs =
+        './slug': {slug: "slug object"}
+        '../common':
+          crudControllerFactory: crudControllerFactory
+
+      controllersFactory = proxyquire(dir + '/controllers', stubs)
 
       done()
     
     describe 'Exports', ->
-      it 'exports crud controller', (done) ->
-        assert.property controllers, 'crud', 'Controllers does not export crud'
-        expect(controllers.crud).to.have.property 'crud', "object"
-        done()
+      controllers = null
+      
+      beforeEach ->
+        controllers = controllersFactory app
 
-      crud()
-
-      it 'exports slug controller', (done) ->
+      it 'slug controller', (done) ->
         assert.property controllers, 'slug', 'Controllers does not export slug'
-        expect(controllers.slug).to.have.property 'slug', "object"
+        expect(controllers.slug).to.have.property 'slug', "slug object"
         done()
-    
+
+      it 'timePattern crud controller', (done) ->
+        assert crudControllerFactory.calledWith(app.models.timePatterns)
+        , 'crud controller factory not called for timePatterns'
+        assert.property controllers, 'timePattern'
+        , 'Controllers does not export timePattern'
+        expect(controllers.timePattern).to.equal app.models.timePatterns
+        done()
+
     describe 'Internal Helpers', ->
       helpers()

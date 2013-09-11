@@ -24,3 +24,5 @@ module.exports =
   timePatterns: require '../../common/timePatterns'
   mongo: require './mongo'
   registerResourceTypes: registerResourceTypes
+  crudControllerFactory: require './crudControllerFactory'
+  crudModelFactory: require './crudModelFactory'

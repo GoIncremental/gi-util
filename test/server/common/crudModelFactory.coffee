@@ -6,9 +6,9 @@ sinon = mocks.sinon
 dir =  path.normalize __dirname + '../../../../server'
 
 module.exports = () ->
-  describe 'Crud', ->
+  describe 'CrudModelFactory', ->
     
-    model = require dir + '/models/crud'
+    crudModelFactory = require dir + '/common/crudModelFactory'
 
     resource =
       find: -> this
@@ -22,11 +22,14 @@ module.exports = () ->
       count: -> this
 
     it 'Exports a factory function', (done) ->
-      expect(model).to.be.a('function')
+      expect(crudModelFactory).to.be.a('function')
       done()
 
     describe 'Function: (resource) -> { object }', ->
-      crud = model resource
+      crud = null
+
+      beforeEach ->
+        crud = crudModelFactory resource
 
       describe 'It outputs an object with properties:', ->
         it 'name: String', ->

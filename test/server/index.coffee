@@ -27,6 +27,10 @@ module.exports = ->
       expect(module).to.have.property 'mocks'
       done()
     
+    it 'middleware', (done) ->
+      expect(module).to.have.property 'middleware'
+      done()
+
     it 'configure: function() -> ', (done) ->
       expect(module).to.have.property 'configure'
       done()

@@ -21,6 +21,7 @@ module.exports = () ->
           name: 'crudControllerFactory'
         './crudModelFactory':
           name: 'crudModelFactory'
+        './rest': 'restStub'
 
       mongooseMock = sinon.spy()
 
@@ -42,6 +43,11 @@ module.exports = () ->
         assert.property common, 'crudModelFactory'
         , 'common does not export crudModelFactory'
         expect(common.crudModelFactory.name).to.equal 'crudModelFactory'
+        done()
+
+      it 'rest', (done) ->
+        expect(common, 'common does not export rest').to.have.ownProperty 'rest'
+        expect(common.rest).to.equal 'restStub'
         done()
 
       crudModelFactory()

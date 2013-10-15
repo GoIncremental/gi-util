@@ -72,6 +72,13 @@ module.exports = (grunt) ->
           ui: 'bdd'
           reporter: 'spec'
 
+    cucumberjs:
+      unit:
+        src: 'test/unit/features'
+        options:
+          format: "pretty"
+ 
+
     requirejs:
       scripts:
         options:
@@ -102,12 +109,13 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
   grunt.loadNpmTasks 'grunt-mocha-test'
+  grunt.loadNpmTasks 'grunt-cucumber'
 
   grunt.registerTask 'build'
   , ['clean', 'coffeeLint', 'coffee', 'requirejs']
 
   grunt.registerTask 'default'
-  , ['build', 'mochaTest:unit']
+  , ['build', 'mochaTest:unit', 'cucumberjs:unit']
 
   grunt.registerTask 'ci'
   , ['default']

@@ -7,7 +7,10 @@ Feature: gint.common.rest
     When the rest module is required
     Then it exports a private respondIfOk function
   
-Feature: gint.common.rest.routeResource(name, app, middleware, controller)
+Feature: route a Resource with specified Middleware
+  if I call routeResource(name, app, middleware, controller) 
+  with specified middleware, then it is used before the 
+  controller routes
   Background:
     Given an express app
     And some middleware
@@ -51,7 +54,7 @@ Feature: gint.common.rest.routeResource(name, app, middleware, controller)
     And requests to GET /api/aResource/:id are terminated by _respondIfOk
     And requests to DEL /api/aResource/:id are terminated by _respondIfOk
 
-Feature: gint.common.rest.routeResource(name, app, middleware, controller)
+Feature: gint.common.rest._respondIfOk(req,res)
   Background:
     Given the rest module is required
     And a result object

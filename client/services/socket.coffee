@@ -1,4 +1,4 @@
-angular.module('app').factory 'Socket'
+angular.module('gint.util').factory 'giSocket'
 , ['$rootScope'
 , ($rootScope) ->
   socket = io.connect() if io?

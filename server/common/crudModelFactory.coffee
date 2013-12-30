@@ -79,16 +79,15 @@ module.exports = (Resource) ->
 
   create = (json, callback) ->
     if not json.systemId?
-      callback Resource.modelName  + ' could not be saved - no SystemId'
+      callback Resource.modelName  + ' could not be created - no systemId'
     else
-      obj = new Resource json
-      obj.save (err, resource) ->
+      Resource.create json, (err, resource) ->
         if err
           callback err
         else if resource
           callback null, resource
         else
-          callback Resource.name + ' could not be saved'
+          callback Resource.modelName + ' could not be saved'
 
   update = (id, json, callback) ->
     if not json.systemId?

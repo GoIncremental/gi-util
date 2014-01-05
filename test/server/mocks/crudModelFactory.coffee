@@ -1,4 +1,4 @@
-module.exports = (name) ->
+module.exports = (Resource) ->
   find: 'crudModel find'
   findById:  'crudModel findById'
   findOne: 'crudModel findOne'
@@ -6,4 +6,4 @@ module.exports = (name) ->
   create: 'crudModel create'
   update: 'crudModel update'
   destroy: 'crudModel destroy'
-  name: name
+  name: Resource.modelName

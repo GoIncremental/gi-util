@@ -2,20 +2,20 @@ _ = require 'underscore'
 moment = require 'moment'
 common = require '../common'
 
-module.exports = (mongoose, crudModelFactory) ->
+module.exports = (dal) ->
 
-  schema =
-    systemId: 'ObjectId'
-    name: 'String'
-    pattern: ['Number']
-    recurrence: 'String'
-    base: 'Date'
+  modelDefinition =
+    name: 'TimePattern'
+    schemaDefinition:
+      systemId: 'ObjectId'
+      name: 'String'
+      pattern: ['Number']
+      recurrence: 'String'
+      base: 'Date'
 
-  modelName = 'TimePattern'
-
-  mongoose.model modelName, schema
-
-  crud = crudModelFactory mongoose.model(modelName)
+  modelDefinition.schema = dal.schemaFactory modelDefinition
+  model = dal.modelFactory modelDefinition
+  crud = dal.crudFactory model
 
   checkValidPattern = (recurrence, pattern) ->
     if !recurrence? or !pattern?

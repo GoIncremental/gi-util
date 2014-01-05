@@ -4,8 +4,9 @@ sinon = require 'sinon'
 proxyquire = require 'proxyquire'
 path = require 'path'
 
-counter = require './counter'
+counters = require './counters'
 timePatterns = require './timePatterns'
+resources = require './resources'
 
 module.exports = () ->
   describe 'Models', ->
@@ -17,8 +18,9 @@ module.exports = () ->
       dir =  path.normalize __dirname + '../../../../server'
 
       stubs =
-        './counter': sinon.stub().returns {name: 'counter'}
+        './counters': sinon.stub().returns {name: 'counters'}
         './timePatterns': sinon.stub().returns {name: 'timePatterns'}
+        './resources': sinon.stub().returns {name: 'resources'}
 
       mongooseMock = sinon.spy()
 
@@ -29,16 +31,21 @@ module.exports = () ->
     describe 'Exports', ->
 
       it 'counter', (done) ->
-        assert.ok stubs['./counter'].calledOnce
-        assert stubs['./counter'].calledWithExactly(mongooseMock)
-        , 'counter not initalized'
-        assert.property models, 'counter', 'models does not export counter'
-        expect(models.counter.name).to.equal 'counter'
+        assert.ok stubs['./counters'].calledOnce
+        assert stubs['./counters'].calledWithExactly(mongooseMock)
+        , 'counters not initalized'
+        assert.property models, 'counters', 'models does not export counter'
+        expect(models.counters.name).to.equal 'counters'
         done()
 
       it 'timePatterns', (done) ->
         assert.ok stubs['./timePatterns'].calledOnce
         done()
+
+      it 'resources', (done) ->
+        assert.ok stubs['./resources'].calledOnce
+        done()
     
-      counter()
+      counters()
       timePatterns()
+      resources()

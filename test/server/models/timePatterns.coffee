@@ -11,53 +11,79 @@ module.exports = () ->
 
     modelFactory = require dir + '/models/timePatterns'
     model = null
+    expectedDefinition =
+      name: 'TimePattern'
+      schemaDefinition:
+        systemId: 'ObjectId'
+        name: 'String'
+        pattern: ['Number']
+        recurrence: 'String'
+        base: 'Date'
 
     it 'Exports a factory function', (done) ->
       expect(modelFactory).to.be.a('function')
       done()
 
-    describe 'Constructor: (mongoose, crudModelFactory) -> { object }', ->
-      
+    describe 'Constructor: (dal) -> { object }', ->
       beforeEach ->
-        model = modelFactory mocks.mongoose, mocks.crudModelFactory
+        sinon.spy mocks.dal, 'schemaFactory'
+        sinon.spy mocks.dal, 'modelFactory'
+        sinon.spy mocks.dal, 'crudFactory'
+        model = modelFactory mocks.dal
 
-      it 'Creates a timePatterns mongoose model', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern', sinon.match.any))
+      afterEach ->
+        mocks.dal.modelFactory.restore()
+        mocks.dal.schemaFactory.restore()
+        mocks.dal.crudFactory.restore()
+      
+      it 'Creates a timePatterns schema', (done) ->
+        expect(mocks.dal.schemaFactory.calledWithMatch(expectedDefinition))
+        .to.be.true
+        done()
+
+      it 'Creates a timePatterns model', (done) ->
+        expect(mocks.dal.modelFactory.calledWithMatch(expectedDefinition))
+        .to.be.true
+        done()
+
+      it 'Uses Crud Factory with returned model', (done) ->
+        returnedModel = mocks.dal.modelFactory.returnValues[0]
+        expect(mocks.dal.crudFactory.calledWithMatch(returnedModel))
         .to.be.true
         done()
     
     describe 'Schema', ->
+      schema = null
+      beforeEach ->
+        sinon.spy mocks.dal, 'schemaFactory'
+        model = modelFactory mocks.dal
+        schema = mocks.dal.schemaFactory.returnValues[0]
+
+      afterEach ->
+        mocks.dal.schemaFactory.restore()
 
       it 'systemId: ObjectId', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern'
-        , sinon.match.hasOwn 'systemId', 'ObjectId')).to.be.true
+        expect(schema).to.have.property 'systemId', 'ObjectId'
         done()
 
       it 'name: String', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern'
-        , sinon.match.hasOwn 'name', 'String')).to.be.true
+        expect(schema).to.have.property 'name', 'String'
         done()
 
       it 'pattern: [Number]', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern'
-        , sinon.match.hasOwn 'pattern', ['Number'])).to.be.true
+        expect(schema).to.have.property('pattern').with.length 1
+        expect(schema.pattern[0]).to.equal 'Number'
         done()
 
       it 'recurrence: String', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern'
-        , sinon.match.hasOwn 'recurrence', 'String')).to.be.true
+        expect(schema).to.have.property 'recurrence', 'String'
         done()
 
       it 'base: Date', (done) ->
-        expect(mocks.mongoose.model.calledWith('TimePattern'
-        , sinon.match.hasOwn 'base', 'Date')).to.be.true
+        expect(schema).to.have.property 'base', 'Date'
         done()
 
     describe 'Exports', ->
-      mocks.exportsCrudModel 'TimePattern'
-      , modelFactory(mocks.mongoose, mocks.crudModelFactory)
-      , {create: true, update: true}
-
       mockCrudModel =
         name: "mockModel"
         create: ->
@@ -73,7 +99,13 @@ module.exports = () ->
         mockCrudModel
 
       beforeEach ->
-        model = modelFactory mocks.mongoose, mockCrudModelFactory
+        mockDal = mocks.dal
+        mockDal.crudFactory = mockCrudModelFactory
+        model = modelFactory mocks.dal
+
+      mocks.exportsCrudModel 'TimePattern'
+      , modelFactory(mocks.dal)
+      , {create: true, update: true}
 
       describe 'Overridden Crud', ->
 
@@ -304,7 +336,7 @@ module.exports = () ->
                 timeAfterXSecondsOnFrom: sinon.stub()
 
           model = proxyquire(dir + '/models/timePatterns', stubs)(
-            mocks.mongoose, mockCrudModelFactory
+            mocks.dal
           )
 
           sinon.stub mockCrudModel, 'findById'

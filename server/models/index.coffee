@@ -1,4 +1,5 @@
 common = require '../common'
-module.exports = (mongoose) ->
-  counter: require('./counter')(mongoose)
-  timePatterns: require('./timePatterns')(mongoose, common.crudModelFactory)
+module.exports = (dal) ->
+  counters: require('./counters')(dal)
+  timePatterns: require('./timePatterns')(dal)
+  resources: require('./resources')(dal)

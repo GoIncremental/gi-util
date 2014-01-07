@@ -1,11 +1,14 @@
 common = require './common'
 routes = require './routes'
 middleware = require './middleware'
+models = require './models'
+controllers = require './controllers'
+middleware = require './middleware'
 
-configure = (app, mongoose) ->
-  common.extend app.models, require('./models')(mongoose)
-  common.extend app.controllers, require('./controllers')(app)
-  common.extend app.middleware, require('./middleware')
+configure = (app, dal) ->
+  common.extend app.models, models(dal)
+  common.extend app.controllers, controllers(app)
+  common.extend app.middleware, middleware
 
   routes.configure app, common.rest
 

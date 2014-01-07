@@ -6,9 +6,9 @@ sinon = mocks.sinon
 dir =  path.normalize __dirname + '../../../../server'
 
 module.exports = () ->
-  describe 'Crud', ->
+  describe 'CrudModelFactory', ->
     
-    model = require dir + '/models/crud'
+    crudModelFactory = require dir + '/common/crudModelFactory'
 
     resource =
       find: -> this
@@ -20,13 +20,17 @@ module.exports = () ->
       limit: -> this
       exec: -> this
       count: -> this
+      create: -> this
 
     it 'Exports a factory function', (done) ->
-      expect(model).to.be.a('function')
+      expect(crudModelFactory).to.be.a('function')
       done()
 
     describe 'Function: (resource) -> { object }', ->
-      crud = model resource
+      crud = null
+
+      beforeEach ->
+        crud = crudModelFactory resource
 
       describe 'It outputs an object with properties:', ->
         it 'name: String', ->
@@ -371,8 +375,74 @@ module.exports = () ->
               done()
 
         describe 'create: (json, callback) -> callback(err, obj)', ->
-          it 'HAS NO TESTS YET :-(', (done) ->
+          beforeEach (done) ->
+            sinon.stub resource, 'create'
             done()
+          
+          afterEach (done) ->
+            resource.create.restore()
+            done()
+
+          it 'returns an error if systemId not specified in json', (done) ->
+            json =
+              name: 'bob'
+
+            crud.create json, (err, obj) ->
+              expect(err).to.equal resource.modelName +
+              ' could not be created - no systemId'
+              expect(obj).to.not.exist
+              done()
+          
+          it 'passes json through to resource.create', (done) ->
+            json =
+              some: 'data'
+              systemId: '123'
+
+            resource.create.callsArgWith 1, null, {}
+            
+            crud.create json, (err, obj) ->
+              expect(err).to.not.exist
+              expect(obj).to.be.an 'object'
+              expect(resource.create.called).to.be.true
+              expect(resource.create.calledWith(json, sinon.match.func)
+              , 'json did not match').to.be.true
+              done()
+          
+          it 'returns the error if create errors', (done) ->
+            json =
+              some: 'data'
+              systemId: '123'
+
+            resource.create.callsArgWith 1, "an error",null
+
+            crud.create json, (err, obj) ->
+              expect(err).to.equal 'an error'
+              expect(obj).to.not.exist
+              done()
+
+          it 'returns the error if create returns nothing', (done) ->
+            json =
+              some: 'data'
+              systemId: '123'
+
+            resource.create.callsArgWith 1, null, null
+
+            crud.create json, (err, obj) ->
+              expect(err).to.equal resource.modelName + ' could not be saved'
+              expect(obj).to.not.exist
+              done()
+
+          it 'retuns the object passed by create if all ok', (done) ->
+            json =
+              some: 'data'
+              systemId: '123'
+
+            resource.create.callsArgWith 1, null, json
+
+            crud.create json, (err, obj) ->
+              expect(err).to.not.exist
+              expect(obj).to.equal json
+              done()
 
         describe 'update: Function(id, json, callback)
         -> callback(err, obj)', ->

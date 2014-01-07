@@ -1,4 +1,6 @@
-helper = require './helper'
+helper = require '../controllers/helper'
+_ = require 'underscore'
+async = require 'async'
 
 module.exports = (model) ->
 
@@ -16,17 +18,45 @@ module.exports = (model) ->
         else
           res.json 200, result
 
+
   create = (req, res, next) ->
-    req.body.systemId = req.systemId
-    model.create req.body, (err, obj) ->
-      if err
-        res.json 500, {error: err.toString()}
-      else
+    if _.isArray req.body
+      errors = []
+      results = []
+      async.each req.body, (obj, cb) ->
+        obj.systemId = req.systemId
+        model.create obj, (err, result) ->
+          if err
+            errors.push {message: err, obj: obj}
+            cb()
+          else if result
+            results.push {message: "ok", obj: obj}
+            cb()
+          else
+            errors.push {message: "create failed for reasons unknown", obj: obj}
+            cb()
+      , () ->
+        resultCode = 200
+        if errors.length > 0
+          resultCode = 500
         if next
-          res.gintResult = obj
+          res.gintResult = errors.concat results
+          res.gintResultCode = resultCode
           next()
         else
-          res.json 200, obj
+          res.json resultCode, errors.concat results
+
+    else
+      req.body.systemId = req.systemId
+      model.create req.body, (err, obj) ->
+        if err
+          res.json 500, {error: err.toString()}
+        else
+          if next
+            res.gintResult = obj
+            next()
+          else
+            res.json 200, obj
 
   show = (req, res, next) ->
     if req.params?.id and req.systemId

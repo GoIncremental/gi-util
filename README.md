@@ -1,4 +1,4 @@
 gint-util
 -------------
 
-[![Build Status](https://api.travis-ci.com/Gintellect/gint-util.png?token=Ep7JsJpF3GkfPp6Gsk1a)](http://magnum.travis-ci.com/Gintellect/gint-util)
+[![Build Status](https://drone.io/github.com/Gintellect/gint-util/status.png)](https://drone.io/github.com/Gintellect/gint-util/latest)

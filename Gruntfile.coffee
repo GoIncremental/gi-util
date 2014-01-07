@@ -71,13 +71,13 @@ module.exports = (grunt) ->
           ignoreLeaks: false
           ui: 'bdd'
           reporter: 'spec'
-      travis:
-        src: ['test/server/testSpec.coffee']
+
+    cucumberjs:
+      unit:
+        src: 'test/unit/features'
         options:
-          globals: ['UNorm']
-          timeout: 3000
-          ignoreLeaks: false
-          reporter: 'dot'   
+          format: "pretty"
+ 
 
     requirejs:
       scripts:
@@ -109,15 +109,16 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
   grunt.loadNpmTasks 'grunt-mocha-test'
+  grunt.loadNpmTasks 'grunt-cucumber'
 
   grunt.registerTask 'build'
   , ['clean', 'coffeeLint', 'coffee', 'requirejs']
 
   grunt.registerTask 'default'
-  , ['build', 'mochaTest:unit']
+  , ['build', 'mochaTest:unit', 'cucumberjs:unit']
 
-  grunt.registerTask 'travis'
-  , ['build', 'mochaTest:travis']
+  grunt.registerTask 'ci'
+  , ['default']
 
   grunt.registerTask 'run'
   , [ 'default', 'watch']

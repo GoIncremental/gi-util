@@ -9,16 +9,17 @@ proxyquire = require 'proxyquire'
 dir =  path.normalize __dirname + '../../../../server'
 
 module.exports = () ->
-  describe 'Crud', ->
+  describe 'CrudControllerFactory', ->
     
     stubs =
-      './helper':
+      '../controllers/helper':
         getOptions: ->
 
-    crud = proxyquire dir + '/controllers/crud', stubs
+    crudControllerFactory = proxyquire dir +
+    '/common/crudControllerFactory', stubs
 
     it 'Exports a factory function', (done) ->
-      expect(crud).to.be.a 'function'
+      expect(crudControllerFactory).to.be.a 'function'
       done()
 
     describe 'Function: (model) -> { object } ', ->
@@ -32,8 +33,17 @@ module.exports = () ->
         find: ->
         count: ->
       
-      controller = crud mockModel
-      
+      controller = null
+      alice = null
+      bob = null
+      charlie = null
+
+      beforeEach ->
+        alice = {alice: 'alice'}
+        bob = {bob: 'bob'}
+        charlie = {charlie: 'charlie'}
+        controller = crudControllerFactory mockModel
+
       describe 'returns an object with properties:', ->
         it 'name: String', (done) ->
           expect(controller).to.have.ownProperty 'name'
@@ -89,21 +99,22 @@ module.exports = () ->
 
           beforeEach () ->
             sinon.stub mockModel, 'find'
-            sinon.stub stubs['./helper'], 'getOptions'
-            stubs['./helper'].getOptions.returns options
+            sinon.stub stubs['../controllers/helper'], 'getOptions'
+            stubs['../controllers/helper'].getOptions.returns options
             res.json = sinon.spy()
 
           afterEach () ->
             mockModel.find.restore()
             res.json.reset()
-            stubs['./helper'].getOptions.restore()
+            stubs['../controllers/helper'].getOptions.restore()
 
           it 'gets options by passing req and model to helper.getOptions'
           , (done) ->
             mockModel.find.callsArg 1
 
             controller.index req, {}, () ->
-              assert stubs['./helper'].getOptions.calledWith(req, mockModel)
+              assert stubs['../controllers/helper'].getOptions
+              .calledWith(req, mockModel)
               , 'did not call helper.getOptions with req and /or model'
               done()
 
@@ -158,6 +169,102 @@ module.exports = () ->
           afterEach () ->
             mockModel.create.restore()
             res.json.reset()
+
+          it 'checks to see if body is an array', (done) ->
+            req.body = []
+            controller.create req, res, () ->
+              expect(res.gintResult).to.be.an 'array'
+              expect(res.gintResult.length).to.equal 0
+            done()
+
+          it 'calls model create once for each object', (done) ->
+            req.body = [alice, bob]
+            mockModel.create.callsArgWith 1, null, null
+            controller.create req, res
+            expect(mockModel.create.calledTwice).to.be.true
+            done()
+
+          it 'returns error messages for any failed objects ' +
+          'together with sucess results', (done) ->
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, "an error", null
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, null
+
+            controller.create req, res
+
+            expect(res.json.calledWith 500).to.be.true
+            expect(res.json.getCall(0).args[1]).to.deep.equal [
+              {message: "an error", obj: alice},
+              {message: "create failed for reasons unknown", obj: charlie},
+              {message: "ok", obj: bob}
+            ]
+
+            done()
+
+          it 'sets res.gintResult if all sucessfully inserted', (done) ->
+
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResult).to.deep.equal [
+                {message: "ok", obj: alice},
+                {message: "ok", obj: bob},
+                {message: "ok", obj: charlie}
+              ]
+
+              done()
+
+          it 'sets res.gintResultCode to 200 if sucessful', (done) ->
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResultCode).to.equal 200
+              done()
+
+          it 'sets res.gintResultCode to 500 if there are errors', (done) ->
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, "an error", bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res, () ->
+              expect(res.json.called).to.be.false
+              expect(res.gintResultCode).to.equal 500
+              done()
+            
+          it 'calls res.json with 200 if no callback specified', (done) ->
+            alice = {alice: 'alice'}
+            bob = {bob: 'bob'}
+            charlie = {charlie: 'charlie'}
+            req.body = [alice, bob, charlie]
+
+            mockModel.create.callsArgWith 1, null, alice
+            mockModel.create.callsArgWith 1, null, bob
+            mockModel.create.callsArgWith 1, null, charlie
+
+            controller.create req, res
+
+            expect(res.json.calledWith 200).to.be.true
+            expect(res.json.getCall(0).args[1]).to.deep.equal [
+              {message: "ok", obj: alice},
+              {message: "ok", obj: bob},
+              {message: "ok", obj: charlie}
+            ]
+
+            done()
 
           it 'sets req.body.systemId to the value given in req.systemId'
           , (done) ->
@@ -544,20 +651,21 @@ module.exports = () ->
 
           beforeEach () ->
             sinon.stub mockModel, 'count'
-            sinon.stub stubs['./helper'], 'getOptions'
-            stubs['./helper'].getOptions.returns options
+            sinon.stub stubs['../controllers/helper'], 'getOptions'
+            stubs['../controllers/helper'].getOptions.returns options
             res.json = sinon.spy()
 
           afterEach () ->
             mockModel.count.restore()
             res.json.reset()
-            stubs['./helper'].getOptions.restore()
+            stubs['../controllers/helper'].getOptions.restore()
 
           it 'gets options by passing req to helper.getOptions', (done) ->
             mockModel.count.callsArg 1
 
             controller.count req, {}, () ->
-              assert stubs['./helper'].getOptions.calledWith(req, mockModel)
+              assert stubs['../controllers/helper'].getOptions
+              .calledWith(req, mockModel)
               , 'did not call helper.getOptions with req and/or model'
               done()
 

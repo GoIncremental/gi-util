@@ -1,5 +1,5 @@
-angular.module('app').factory 'Crud'
-, ['$resource', '$q', 'Socket'
+angular.module('gint.util').factory 'giCrud'
+, ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 
   factory = (resourceName, usePromises) ->

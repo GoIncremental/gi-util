@@ -1,7 +1,7 @@
 {
   "author": "David Bochenski",
   "name": "gint-util",
-  "version": "0.2.0",
+  "version": "0.2.1-dev",
   "main": "./server/index.coffee",
   "scripts": {
     "test": "grunt ci"

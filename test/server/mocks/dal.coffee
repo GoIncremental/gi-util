@@ -6,4 +6,10 @@ module.exports =
   crudFactory: crudFactory
   modelFactory: modelFactory
   schemaFactory: (def) ->
-    def.schemaDefinition
+    res = def.schemaDefinition
+    res.virtual = () ->
+      get: ->
+      set: ->
+    res.methods = {}
+    res.pre = () ->
+    res

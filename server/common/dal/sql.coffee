@@ -71,7 +71,7 @@ class QueryBuilder
       @
 
   findByIdAndUpdate: (id, obj, cb) ->
-    @returnArray = true
+    @returnArray = false
     value = ""
     @query = 'UPDATE ' + @table + ' SET '
     separator = ''

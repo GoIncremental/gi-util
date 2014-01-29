@@ -73,7 +73,7 @@ angular.module('gint.util').factory 'giCrud'
           updateMasterList result
           success(result) if success
         , (failure) ->
-          fail(result) if fail
+          fail(failure) if fail
 
       else
         #we are createing a new object on the server

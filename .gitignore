@@ -1,7 +1,9 @@
 node_modules/
+bower_modules/
 bin/
 !bin/gint-util.js
 coverage/
 temp/
 npm-debug.log
 .DS_Store
+

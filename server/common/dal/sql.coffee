@@ -80,7 +80,13 @@ class QueryBuilder
         @query += separator + ' ' + key + '=' + value
         separator = ','
     @query += ' WHERE ' + @idColumn + ' = ' + id
-    @exec cb
+    @exec (err, obj) =>
+      if err
+        cb err, obj
+      else
+        query = {}
+        query[@idColumn] = id
+        @findOne query, cb
 
   remove: (query, cb) ->
     @returnArray = false

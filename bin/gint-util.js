@@ -259,7 +259,7 @@ angular.module('gint.util').factory('giCrud', [
             }
           }, function(failure) {
             if (fail) {
-              return fail(result);
+              return fail(failure);
             }
           });
         } else {

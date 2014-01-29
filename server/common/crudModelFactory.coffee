@@ -63,7 +63,7 @@ module.exports = (Resource) ->
         if err
           callback(err) if callback
         else if resource
-          callback(err, resource) if callback
+          callback(null, resource) if callback
         else
           callback('Cannot find ' + Resource.modelName) if callback
 

@@ -4,7 +4,7 @@ queryQueue = require './queryQueue'
 sqlHelper = require './sqlHelper'
 
 class QueryBuilder
-  constructor: (@table, @dbConnection) ->
+  constructor: (@table, @dbConnection, @idColumn) ->
     @query = ""
     @returnArray = true
 
@@ -70,13 +70,17 @@ class QueryBuilder
     else
       @
 
-  findByIdAndUpdate: (id, update, options, cb) ->
-    @returnArray = false
-    @query = 'SELECT TOP 1 * FROM ' + @table + ' WHERE _id = ' + id
-    if cb?
-      @exec cb
-    else
-      @
+  findByIdAndUpdate: (id, obj, cb) ->
+    @returnArray = true
+    value = ""
+    @query = 'UPDATE ' + @table + ' SET '
+    separator = ''
+    for key, value of obj
+      if key isnt @idColumn
+        @query += separator + ' ' + key + '=' + value
+        separator = ','
+    @query += ' WHERE ' + @idColumn + ' = ' + id
+    @exec cb
 
   remove: (query, cb) ->
     @returnArray = false
@@ -99,7 +103,11 @@ modelFactory = (def, dbConnection) ->
   if def.options?.collectionName?
     collectionName = def.options.collectionName
 
-  qb = new def.Qb(collectionName, dbConnection)
+  idColumn = "_id"
+  if def.options?.idColumn?
+    idColumn = def.options.idColumn
+
+  qb = new def.Qb(collectionName, dbConnection, idColumn)
   qb.modelName = def.name
   qb
 

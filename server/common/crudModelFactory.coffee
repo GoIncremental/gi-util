@@ -103,8 +103,7 @@ module.exports = (Resource) ->
         if err
           callback err
         else if resource
-          resource.remove (err) ->
-            callback err
+          Resource.remove {_id: resource._id, systemId: systemId}, callback
         else
           callback null
   

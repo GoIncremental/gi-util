@@ -90,7 +90,10 @@ class QueryBuilder
 
   remove: (query, cb) ->
     @returnArray = false
-    @query = 'DELETE FROM ' + @table + ' WHERE _id = ' + query.id
+
+    @query = 'DELETE FROM ' + @table +
+    ' WHERE ' + @idColumn + ' = ' + query[@idColumn]
+    
     if cb?
       @exec cb
     else

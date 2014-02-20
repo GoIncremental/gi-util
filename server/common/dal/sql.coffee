@@ -77,8 +77,9 @@ class QueryBuilder
     separator = ''
     for key, value of obj
       if key isnt @idColumn
-        @query += separator + ' ' + key + '=' + value
-        separator = ','
+        if value?
+          @query += separator + " " + key + "= '" + value + "'" 
+          separator = ','
     @query += ' WHERE ' + @idColumn + ' = ' + id
     @exec (err, obj) =>
       if err

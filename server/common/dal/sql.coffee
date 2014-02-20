@@ -12,7 +12,7 @@ class QueryBuilder
     queryQueue.runQuery @query, @returnArray, @dbConnection, cb
   
   create: (obj, cb) ->
-    @returnArray = true
+    @returnArray = false
     values = "VALUES"
     @query = 'INSERT INTO ' + @table
     separator = ' ('

@@ -15,7 +15,10 @@ processQueryQueue = () ->
         if nextQuery.returnArray
           nextQuery.cb null, result
         else
-          nextQuery.cb null, result[0]
+          if result[0]
+            nextQuery.cb null, result[0]
+          else
+            nextQuery.cb null, {}
       #recursive call to process anything else on the queue
       processQueryQueue()
 

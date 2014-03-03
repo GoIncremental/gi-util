@@ -8,7 +8,10 @@ processQueryQueue = () ->
     queueInProgress = true
     result = []
     console.log nextQuery.query
+    conn = new tedious.Connection nextQuery.conn
     request = new tedious.Request nextQuery.query, (err, rowCount) ->
+      conn.close()
+
       if err
         nextQuery.cb err
       else
@@ -29,19 +32,25 @@ processQueryQueue = () ->
         obj[column.metadata.colName] = column.value
 
       result.push obj
-    nextQuery.conn.execSql request
+
+    conn.on 'connect', (err) ->
+      if err
+        console.log 'error with sql connection ' + err
+        nextQuery.cb err
+      else
+        conn.execSql request
 
   else
     queueInProgress = false
     return
 
 
-runQuery = (query, returnArray, conn, cb) ->
+runQuery = (query, returnArray, connConf, cb) ->
 
   obj =
     query: query
     returnArray: returnArray
-    conn: conn
+    conn: connConf
     cb: cb
 
 

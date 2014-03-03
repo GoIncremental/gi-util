@@ -2,7 +2,7 @@ respondIfOk = (req, res) ->
   if res.gintResult?
     res.json 200, res.gintResult
   else
-    res.json 500, 'something went wrong'
+    res.json 500, {message: 'something went wrong'}
 
 routeResource = (name, app, middleware, controller) ->
   app.get( '/api/' + name

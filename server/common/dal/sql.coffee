@@ -4,7 +4,7 @@ queryQueue = require './queryQueue'
 sqlHelper = require './sqlHelper'
 
 class QueryBuilder
-  constructor: (@table, @dbConnection) ->
+  constructor: (@table, @dbConnection, @idColumn) ->
     @query = ""
     @returnArray = true
 
@@ -12,7 +12,7 @@ class QueryBuilder
     queryQueue.runQuery @query, @returnArray, @dbConnection, cb
   
   create: (obj, cb) ->
-    @returnArray = true
+    @returnArray = false
     values = "VALUES"
     @query = 'INSERT INTO ' + @table
     separator = ' ('
@@ -70,17 +70,31 @@ class QueryBuilder
     else
       @
 
-  findByIdAndUpdate: (id, update, options, cb) ->
+  findByIdAndUpdate: (id, obj, cb) ->
     @returnArray = false
-    @query = 'SELECT TOP 1 * FROM ' + @table + ' WHERE _id = ' + id
-    if cb?
-      @exec cb
-    else
-      @
+    value = ""
+    @query = 'UPDATE ' + @table + ' SET '
+    separator = ''
+    for key, value of obj
+      if key isnt @idColumn
+        if value?
+          @query += separator + " " + key + "= '" + value + "'" 
+          separator = ','
+    @query += ' WHERE ' + @idColumn + ' = ' + id
+    @exec (err, obj) =>
+      if err
+        cb err, obj
+      else
+        query = {}
+        query[@idColumn] = id
+        @findOne query, cb
 
   remove: (query, cb) ->
     @returnArray = false
-    @query = 'DELETE FROM ' + @table + ' WHERE _id = ' + query.id
+
+    @query = 'DELETE FROM ' + @table +
+    ' WHERE ' + @idColumn + ' = ' + query[@idColumn]
+    
     if cb?
       @exec cb
     else
@@ -99,7 +113,11 @@ modelFactory = (def, dbConnection) ->
   if def.options?.collectionName?
     collectionName = def.options.collectionName
 
-  qb = new def.Qb(collectionName, dbConnection)
+  idColumn = "_id"
+  if def.options?.idColumn?
+    idColumn = def.options.idColumn
+
+  qb = new def.Qb(collectionName, dbConnection, idColumn)
   qb.modelName = def.name
   qb
 

@@ -1,4 +1,3 @@
-Q = require 'q'
 tedious = require 'tedious'
 queryQueue = []
 queueInProgress = false
@@ -8,15 +7,18 @@ processQueryQueue = () ->
   if nextQuery?
     queueInProgress = true
     result = []
-
+    console.log nextQuery.query
     request = new tedious.Request nextQuery.query, (err, rowCount) ->
       if err
-        nextQuery.promise.reject err
+        nextQuery.cb err
       else
         if nextQuery.returnArray
-          nextQuery.promise.resolve result
+          nextQuery.cb null, result
         else
-          nextQuery.promise.resolve result[0]
+          if result[0]
+            nextQuery.cb null, result[0]
+          else
+            nextQuery.cb null, {}
       #recursive call to process anything else on the queue
       processQueryQueue()
 
@@ -36,22 +38,19 @@ processQueryQueue = () ->
 
 runQuery = (query, returnArray, conn, cb) ->
 
-  console.log 'running query ' + query
-  #pop query on the queue
-  deferred = Q.defer()
-
   obj =
     query: query
     returnArray: returnArray
     conn: conn
-    promise: deferred
+    cb: cb
+
 
   queryQueue.push obj
-  
+
   if !queueInProgress
     processQueryQueue()
 
-  deferred.promise.nodeify cb
+  return
 
 module.exports =
   runQuery: runQuery

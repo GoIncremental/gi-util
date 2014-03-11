@@ -1,6 +1,7 @@
 mongoose = require 'mongoose'
 require('mongoose-long')(mongoose)
 crudModelFactory = require '../crudModelFactory'
+connectMongo = require 'connect-mongo'
 
 schemaFactory = (def) ->
   if def.options?
@@ -25,7 +26,12 @@ module.exports =
       pass: conf.password
 
     mongoose.connect conf.host, conf.name, port, opts
-    return
+    mongoose.connection
+
+  sessionStore: (express) ->
+    MongoStore = connectMongo(express)
+    sessionStore = new MongoStore({mongoose_connection: mongoose.connection})
+    sessionStore
 
   crudFactory: crudModelFactory
   modelFactory: modelFactory

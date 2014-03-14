@@ -18,7 +18,7 @@ modelFactory = (def) ->
 
 module.exports =
 
-  connect: (conf) ->
+  connect: (conf, cb) ->
     port = parseInt conf.port
 
     opts =
@@ -26,7 +26,10 @@ module.exports =
       pass: conf.password
 
     mongoose.connect conf.host, conf.name, port, opts
-    mongoose.connection
+    
+    mongoose.connection.on 'connected',  () ->
+      cb() if cb
+
 
   sessionStore: (express) ->
     MongoStore = connectMongo(express)

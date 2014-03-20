@@ -163,9 +163,9 @@ if (typeof exports === "undefined" || exports === null) {
   };
 })((typeof exports !== "undefined" && exports !== null ? exports : this.gint.util.common['timePatterns'] = {}));
 
-angular.module('gint.util', ['ngResource']);
+angular.module('gi.util', ['ngResource']);
 
-angular.module('gint.util').factory('giCrud', [
+angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
     factory = function(resourceName, usePromises) {
@@ -381,7 +381,7 @@ angular.module('gint.util').factory('giCrud', [
   }
 ]);
 
-angular.module('gint.util').factory('giSocket', [
+angular.module('gi.util').factory('giSocket', [
   '$rootScope', function($rootScope) {
     var socket;
     if (typeof io !== "undefined" && io !== null) {

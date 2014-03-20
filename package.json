@@ -1,7 +1,7 @@
 {
   "author": "David Bochenski",
   "name": "gi-util",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "./server/index.coffee",
   "scripts": {
     "test": "grunt ci"

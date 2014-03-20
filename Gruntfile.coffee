@@ -96,7 +96,7 @@ module.exports = (grunt) ->
 
             return contents
           optimize: 'none'
-          out: 'bin/gint-util.js'
+          out: 'bin/gi-util.js'
           preserveLicenseComments: false
           skipModuleInsertion: true
           uglify:

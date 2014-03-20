@@ -1,4 +1,4 @@
-angular.module('gint.util').factory 'giCrud'
+angular.module('gi.util').factory 'giCrud'
 , ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 

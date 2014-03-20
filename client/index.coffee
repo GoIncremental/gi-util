@@ -1,1 +1,1 @@
-angular.module 'gint.util', ['ngResource']
+angular.module 'gi.util', ['ngResource']

@@ -1,4 +1,4 @@
-gint-util
+gi-util
 -------------
 
-[![Build Status](https://drone.io/github.com/Gintellect/gint-util/status.png)](https://drone.io/github.com/Gintellect/gint-util/latest)
+[![Build Status](https://drone.io/github.com/GoIncremental/gi-util/status.png)](https://drone.io/github.com/GoIncremental/gi-util/latest)

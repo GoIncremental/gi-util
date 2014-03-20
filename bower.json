@@ -1,5 +1,5 @@
 {
-  "name": "gint-util",
-  "version": "0.2.1",
-  "main": "./bin/gint-util.js"
+  "name": "gi-util",
+  "version": "0.3.0",
+  "main": "./bin/gi-util.js"
 }

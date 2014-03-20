@@ -1,14 +1,14 @@
 {
   "author": "David Bochenski",
-  "name": "gint-util",
-  "version": "0.2.1",
+  "name": "gi-util",
+  "version": "0.3.0",
   "main": "./server/index.coffee",
   "scripts": {
     "test": "grunt ci"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/gintellect/gint-util.git"
+    "url": "git://github.com/goincremental/gi-util.git"
   },
   "dependencies": {
     "coffee-script": "~1.7.1",

@@ -13,7 +13,7 @@ module.exports = (model) ->
         res.json 404, err
       else
         if next
-          res.gintResult = result
+          res.giResult = result
           next()
         else
           res.json 200, result
@@ -40,8 +40,8 @@ module.exports = (model) ->
         if errors.length > 0
           resultCode = 500
         if next
-          res.gintResult = errors.concat results
-          res.gintResultCode = resultCode
+          res.giResult = errors.concat results
+          res.giResultCode = resultCode
           next()
         else
           res.json resultCode, errors.concat results
@@ -53,7 +53,7 @@ module.exports = (model) ->
           res.json 500, {error: err.toString()}
         else
           if next
-            res.gintResult = obj
+            res.giResult = obj
             next()
           else
             res.json 200, obj
@@ -65,7 +65,7 @@ module.exports = (model) ->
           res.json 404
         else if obj
           if next
-            res.gintResult = obj
+            res.giResult = obj
             next()
           else
             res.json 200, obj
@@ -88,7 +88,7 @@ module.exports = (model) ->
           res.json 400, {message: err}
         else
           if next
-            res.gintResult = obj
+            res.giResult = obj
             next()
           else
             res.json 200, obj
@@ -102,7 +102,7 @@ module.exports = (model) ->
           res.json 400, {message: err}
         else
           if next
-            res.gintResult = 'Ok'
+            res.giResult = 'Ok'
             next()
           else
             res.json 200
@@ -118,7 +118,7 @@ module.exports = (model) ->
         res.json 404, {message: err}
       else
         if next
-          res.gintResult = {count: result}
+          res.giResult = {count: result}
           next()
         else
           res.json 200, result

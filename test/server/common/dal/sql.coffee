@@ -55,7 +55,7 @@ module.exports = () ->
         qb = {}
         
         beforeEach ->
-          qb = new sql.QueryBuilder("aTable", "aConnection")
+          qb = new sql.QueryBuilder("aTable", "aConnection", "_id")
         
         describe 'Properties', ->
           it 'query: String', (done) ->
@@ -160,8 +160,8 @@ module.exports = () ->
               qb.returnArray = false
               qb.create query, 'callbackstub'
 
-            it 'sets returnArray to true', (done) ->
-              expect(qb.returnArray).to.be.true
+            it 'sets returnArray to false', (done) ->
+              expect(qb.returnArray).to.be.false
               done()
 
             it 'inserts into correct table', (done) ->
@@ -386,31 +386,30 @@ module.exports = () ->
             beforeEach ->
               sinon.spy qb, 'exec'
             
-            it 'DOES NOT DO UPDATE YET', (done) ->
-              qb.findByIdAndUpdate "123", "def", {}, "callback"
+            it 'sets the query', (done) ->
+              qb.findByIdAndUpdate "123", {abc: "def"}, "callback"
               expect(qb.query)
-              .to.equal 'SELECT TOP 1 * FROM aTable WHERE _id = ' + "123"
+              .to.equal "UPDATE aTable SET abc= 'def' WHERE _id = 123"
               done()
 
             it 'returns the query builder if no callback', (done) ->
-              res = qb.findByIdAndUpdate "123", "def", {}
+              res = qb.findByIdAndUpdate "123", {abc: "def"}
               expect(qb).to.equal res
               done()
 
             it 'does not run a query if no callback passed', (done) ->
-              qb.findByIdAndUpdate "123", "def", {}
+              qb.findByIdAndUpdate "123", {abc: "def"}
               expect(qb.exec.notCalled, "exec was called").to.be.true
               done()
 
             it 'returns nothing if callback is specified', (done) ->
-              res = qb.findByIdAndUpdate "123", "def", {}, "callback"
+              res = qb.findByIdAndUpdate "123", {abc: "def"}, "callback"
               expect(res).to.not.exist
               done()
 
             it 'executes the query if callback is specified', (done) ->
-              qb.count qb.findByIdAndUpdate "123", "def", {}, "callback"
+              qb.count qb.findByIdAndUpdate "123", {abc: "def"}, "callback"
               expect(qb.exec.calledOnce).to.be.true
-              expect(qb.exec.calledWithExactly "callback").to.be.true
               done()
 
           describe 'remove', ->
@@ -424,7 +423,7 @@ module.exports = () ->
               done()
 
             it 'removes based on the id given in query', (done) ->
-              qb.remove {id: "123"}, "callback"
+              qb.remove {_id: "123"}, "callback"
               expect(qb.query)
               .to.equal 'DELETE FROM aTable WHERE _id = ' + "123"
               done()

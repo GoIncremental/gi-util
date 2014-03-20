@@ -10,6 +10,8 @@ module.exports = () ->
     mongo = null
     mongooseStub =
       connect: ->
+      connection:
+        on: ->
       model: ->
       Schema: ->
 

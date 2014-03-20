@@ -54,19 +54,19 @@ Feature: route a Resource with specified Middleware
     And requests to GET /api/aResource/:id are terminated by _respondIfOk
     And requests to DEL /api/aResource/:id are terminated by _respondIfOk
 
-Feature: gint.common.rest._respondIfOk(req,res)
+Feature: gi.common.rest._respondIfOk(req,res)
   Background:
     Given the rest module is required
     And a result object
   
-  Scenario: _respondIfOk when req.gintResult is present
-    Given the response has a gint result
+  Scenario: _respondIfOk when req.giResult is present
+    Given the response has a gi result
     When _respondIfOk is called
     Then the response is ended with 200 OK
-    And the response returns the res.gintResult as json
+    And the response returns the res.giResult as json
   
-  Scenario: _respondIfOk when req.gintResult is missing
-    Given the response has no gint result
+  Scenario: _respondIfOk when req.giResult is missing
+    Given the response has no gi result
     When _respondIfOk is called
     Then the response is ended with 500 server error
     And the response returns message: something went wrong as json

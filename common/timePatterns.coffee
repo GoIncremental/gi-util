@@ -1,12 +1,12 @@
 if not exports?
-  if not @gint
-    @gint = {}
-  if not @gint.util
-    @gint['util'] = {}
-  if not @gint.util.common
-    @gint.util['common'] = {}
+  if not @gi
+    @gi = {}
+  if not @gi.util
+    @gi['util'] = {}
+  if not @gi.util.common
+    @gi.util['common'] = {}
 
-do (exports = (if exports? then exports else @gint.util.common['timePatterns'] = {} )) ->
+do (exports = (if exports? then exports else @gi.util.common['timePatterns'] = {} )) ->
   moment =  if window? then window.moment else require('moment')
 
   enrichPeriod = (pattern, recurrence) ->

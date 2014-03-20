@@ -80,12 +80,12 @@ module.exports = () ->
     .to.be.true
     next()
 
-  @Given /^the response has a gint result$/, (next) ->
-    @res.gintResult = 'a gint result'
+  @Given /^the response has a gi result$/, (next) ->
+    @res.giResult = 'a gi result'
     next()
 
-  @Given /^the response has no gint result$/, (next) ->
-    @res.gintResult = null
+  @Given /^the response has no gi result$/, (next) ->
+    @res.giResult = null
     next()
 
   @When /^_respondIfOk is called$/, (next) ->
@@ -99,14 +99,14 @@ module.exports = () ->
     ).to.be.true
     next()
 
-  @Then /^the response returns the res\.gintResult as json$/, (next) ->
-    expect(@res.json.calledWith(sinon.match.any, @res.gintResult)
-    , "res.json was not called with message " + @res.gintResult
+  @Then /^the response returns the res\.giResult as json$/, (next) ->
+    expect(@res.json.calledWith(sinon.match.any, @res.giResult)
+    , "res.json was not called with message " + @res.giResult
     ).to.be.true
     next()
 
   @Then /^the response returns message: (.*) as json$/, (msg, next) ->
-    expect(@res.json.calledWith(sinon.match.any, msg)
+    expect(@res.json.calledWith(sinon.match.any, {message: msg})
     , "res.json was not called with message " + msg
     ).to.be.true
     next()

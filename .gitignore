@@ -1,7 +1,7 @@
 node_modules/
 bower_modules/
 bin/
-!bin/gint-util.js
+!bin/gi-util.js
 coverage/
 temp/
 npm-debug.log

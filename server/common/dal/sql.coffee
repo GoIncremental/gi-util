@@ -73,21 +73,25 @@ class QueryBuilder
   findByIdAndUpdate: (id, obj, cb) ->
     @returnArray = false
     value = ""
-    @query = 'UPDATE ' + @table + ' SET '
+    @query = 'UPDATE ' + @table + ' SET'
     separator = ''
     for key, value of obj
       if key isnt @idColumn
         if value?
-          @query += separator + " " + key + "= '" + value + "'" 
+          @query += separator + " " + key + "= '" +
+          value + "'"
           separator = ','
     @query += ' WHERE ' + @idColumn + ' = ' + id
-    @exec (err, obj) =>
-      if err
-        cb err, obj
-      else
-        query = {}
-        query[@idColumn] = id
-        @findOne query, cb
+    if cb
+      @exec (err, obj) =>
+        if err
+          cb err, obj
+        else
+          query = {}
+          query[@idColumn] = id
+          @findOne query, cb
+    else
+      @
 
   remove: (query, cb) ->
     @returnArray = false

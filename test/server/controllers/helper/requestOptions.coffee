@@ -31,7 +31,7 @@ module.exports = () ->
       beforeEach (done) ->
         req =
           systemId: '123'
-          gintFilter:
+          giFilter:
             aModel: 'anId'
             aParent: 'aParentId'
 
@@ -49,13 +49,13 @@ module.exports = () ->
         expect(options.query.systemId).to.equal req.systemId
         done()
 
-      it 'if gint filter is specified for the model name ' +
+      it 'if gi filter is specified for the model name ' +
       'set options.query._id', (done) ->
         options = getOptions req, model
-        expect(options.query._id).to.equal req.gintFilter.aModel
+        expect(options.query._id).to.equal req.giFilter.aModel
         done()
 
-      it 'but not if gint filter is specified for a different model', (done) ->
+      it 'but not if gi filter is specified for a different model', (done) ->
         model.name = 'anotherModel'
         options = getOptions req, model
         expect(options.query._id).to.not.exist

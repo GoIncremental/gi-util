@@ -113,9 +113,11 @@ module.exports = () ->
             mockModel.find.callsArg 1
 
             controller.index req, {}, () ->
-              assert stubs['../controllers/helper'].getOptions
-              .calledWith(req, mockModel)
-              , 'did not call helper.getOptions with req and /or model'
+              assert(
+                stubs['../controllers/helper'].getOptions.calledWith(
+                  req, mockModel
+                ), 'did not call helper.getOptions with req and /or model'
+              )
               done()
 
           it 'uses the options returned as the argument for model.find'
@@ -136,12 +138,12 @@ module.exports = () ->
             , 'res.json did not 404 an error finding'
             done()
 
-          it 'populates res.gintResult with the result if next() is given'
+          it 'populates res.giResult with the result if next() is given'
           , (done) ->
             mockModel.find.callsArgWith 1, null, {a: 'result'}, 1
 
             controller.index req, res, () ->
-              expect(res.gintResult).to.deep.equal {a: 'result'}
+              expect(res.giResult).to.deep.equal {a: 'result'}
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->
@@ -173,8 +175,8 @@ module.exports = () ->
           it 'checks to see if body is an array', (done) ->
             req.body = []
             controller.create req, res, () ->
-              expect(res.gintResult).to.be.an 'array'
-              expect(res.gintResult.length).to.equal 0
+              expect(res.giResult).to.be.an 'array'
+              expect(res.giResult.length).to.equal 0
             done()
 
           it 'calls model create once for each object', (done) ->
@@ -203,7 +205,7 @@ module.exports = () ->
 
             done()
 
-          it 'sets res.gintResult if all sucessfully inserted', (done) ->
+          it 'sets res.giResult if all sucessfully inserted', (done) ->
 
             req.body = [alice, bob, charlie]
 
@@ -213,7 +215,7 @@ module.exports = () ->
 
             controller.create req, res, () ->
               expect(res.json.called).to.be.false
-              expect(res.gintResult).to.deep.equal [
+              expect(res.giResult).to.deep.equal [
                 {message: "ok", obj: alice},
                 {message: "ok", obj: bob},
                 {message: "ok", obj: charlie}
@@ -221,7 +223,7 @@ module.exports = () ->
 
               done()
 
-          it 'sets res.gintResultCode to 200 if sucessful', (done) ->
+          it 'sets res.giResultCode to 200 if sucessful', (done) ->
             req.body = [alice, bob, charlie]
 
             mockModel.create.callsArgWith 1, null, alice
@@ -230,10 +232,10 @@ module.exports = () ->
 
             controller.create req, res, () ->
               expect(res.json.called).to.be.false
-              expect(res.gintResultCode).to.equal 200
+              expect(res.giResultCode).to.equal 200
               done()
 
-          it 'sets res.gintResultCode to 500 if there are errors', (done) ->
+          it 'sets res.giResultCode to 500 if there are errors', (done) ->
             req.body = [alice, bob, charlie]
 
             mockModel.create.callsArgWith 1, null, alice
@@ -242,7 +244,7 @@ module.exports = () ->
 
             controller.create req, res, () ->
               expect(res.json.called).to.be.false
-              expect(res.gintResultCode).to.equal 500
+              expect(res.giResultCode).to.equal 500
               done()
             
           it 'calls res.json with 200 if no callback specified', (done) ->
@@ -298,12 +300,12 @@ module.exports = () ->
             , 'res.json did not 500 an error creating'
             done()
 
-          it 'populates res.gintResult with the result if next() is given'
+          it 'populates res.giResult with the result if next() is given'
           , (done) ->
             mockModel.create.callsArgWith 1, null, {a: 'result'}
 
             controller.create req, res, () ->
-              expect(res.gintResult).to.deep.equal {a: 'result'}
+              expect(res.giResult).to.deep.equal {a: 'result'}
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->
@@ -392,14 +394,14 @@ module.exports = () ->
             , '404 not returned when findbyId returns no object'
             done()
 
-          it 'sets res.gintResult with result and calls next if next given'
+          it 'sets res.giResult with result and calls next if next given'
           , (done) ->
             req.params =
               id: 'anId'
             mockModel.findById.callsArgWith 2, null, {a: 'result'}
 
             controller.show req, res, () ->
-              expect(res.gintResult).to.deep.equal {a: 'result'}
+              expect(res.giResult).to.deep.equal {a: 'result'}
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->
@@ -521,14 +523,14 @@ module.exports = () ->
             , '404 not returned when update returns no object'
             done()
 
-          it 'sets res.gintResult with obj and calls next if next given'
+          it 'sets res.giResult with obj and calls next if next given'
           , (done) ->
             req.params =
               id: 'anId'
             mockModel.update.callsArgWith 2, null, {a: 'obj'}
 
             controller.update req, res, () ->
-              expect(res.gintResult).to.deep.equal {a: 'obj'}
+              expect(res.giResult).to.deep.equal {a: 'obj'}
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->
@@ -614,7 +616,7 @@ module.exports = () ->
             , '400 not returned with error message when destroy errors'
             done()
 
-          it 'sets res.gintResult to Ok and calls next if next given'
+          it 'sets res.giResult to Ok and calls next if next given'
           , (done) ->
             req.params =
               id: 'anId'
@@ -622,7 +624,7 @@ module.exports = () ->
             mockModel.destroy.callsArgWith 2, null
 
             controller.destroy req, res, () ->
-              expect(res.gintResult).to.equal 'Ok'
+              expect(res.giResult).to.equal 'Ok'
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->
@@ -664,9 +666,9 @@ module.exports = () ->
             mockModel.count.callsArg 1
 
             controller.count req, {}, () ->
-              assert stubs['../controllers/helper'].getOptions
-              .calledWith(req, mockModel)
-              , 'did not call helper.getOptions with req and/or model'
+              assert stubs['../controllers/helper'].getOptions.calledWith(
+                req, mockModel
+              ), 'did not call helper.getOptions with req and/or model'
               done()
 
           it 'uses the options.query returned as the argument for model.count'
@@ -686,12 +688,12 @@ module.exports = () ->
             , '404 not returned with error message when destroy errors'
             done()
 
-          it 'sets res.gintResult to count:result and calls next if next given'
+          it 'sets res.giResult to count:result and calls next if next given'
           , (done) ->
             mockModel.count.callsArgWith 1, null, 15
 
             controller.count req, res, () ->
-              expect(res.gintResult).to.deep.equal {count: 15}
+              expect(res.giResult).to.deep.equal {count: 15}
               done()
 
           it 'returns 200 code and the results if next() not given', (done) ->

@@ -1,6 +1,6 @@
 respondIfOk = (req, res) ->
-  if res.gintResult?
-    res.json 200, res.gintResult
+  if res.giResult?
+    res.json 200, res.giResult
   else
     res.json 500, {message: 'something went wrong'}
 

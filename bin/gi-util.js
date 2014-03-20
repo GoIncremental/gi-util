@@ -1,13 +1,13 @@
 
 if (typeof exports === "undefined" || exports === null) {
-  if (!this.gint) {
-    this.gint = {};
+  if (!this.gi) {
+    this.gi = {};
   }
-  if (!this.gint.util) {
-    this.gint['util'] = {};
+  if (!this.gi.util) {
+    this.gi['util'] = {};
   }
-  if (!this.gint.util.common) {
-    this.gint.util['common'] = {};
+  if (!this.gi.util.common) {
+    this.gi.util['common'] = {};
   }
 }
 
@@ -161,7 +161,7 @@ if (typeof exports === "undefined" || exports === null) {
     }
     return result;
   };
-})((typeof exports !== "undefined" && exports !== null ? exports : this.gint.util.common['timePatterns'] = {}));
+})((typeof exports !== "undefined" && exports !== null ? exports : this.gi.util.common['timePatterns'] = {}));
 
 angular.module('gi.util', ['ngResource']);
 

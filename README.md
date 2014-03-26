@@ -1,4 +1,4 @@
 gi-util
 -------------
 
-[![Build Status](https://drone.io/github.com/GoIncremental/gi-util/status.png)](https://drone.io/github.com/GoIncremental/gi-util/latest)
+[![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)

@@ -22,7 +22,7 @@
     "mongoose-long": "0.0.2",
     "q": "~0.9.7",
     "tedious": "~0.1.5",
-    "connect-mongo": "~0.4.0"
+    "connect-mongostore": "^0.1.0"
   },
   "engines": {
     "node": ">= 0.10.0"

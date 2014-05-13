@@ -1,7 +1,20 @@
+_ = require 'underscore'
 mongoose = require 'mongoose'
 require('mongoose-long')(mongoose)
 crudModelFactory = require '../crudModelFactory'
-connectMongo = require 'connect-mongo'
+connectMongo = require 'connect-mongostore'
+
+getConnectionString = (conf) ->
+  uri = "mongodb://"
+  separator = ""
+  if conf.servers?
+    _.each conf.servers, (server) ->
+      uri += separator +  server.host + ":" + server.port + "/" + conf.name
+      separator = ","
+
+  else
+    uri += conf.host + ":" + conf.port + "/" + conf.name
+  uri
 
 schemaFactory = (def) ->
   if def.options?
@@ -24,16 +37,25 @@ module.exports =
     opts =
       user: conf.username
       pass: conf.password
-
-    mongoose.connect conf.host, conf.name, port, opts
+    uri = getConnectionString(conf)
+    mongoose.connect uri, opts
     
     mongoose.connection.on 'connected',  () ->
       cb() if cb
 
-
-  sessionStore: (express) ->
+  sessionStore: (express, conf) ->
     MongoStore = connectMongo(express)
-    sessionStore = new MongoStore({mongoose_connection: mongoose.connection})
+
+    if conf.servers?
+      db =
+        name: conf.name
+        servers: conf.servers
+    else
+      db = 
+        name: conf.name
+        servers: [{ host: conf.host, port: conf.port}]
+
+    sessionStore = new MongoStore({db: db})    
     sessionStore
 
   crudFactory: crudModelFactory

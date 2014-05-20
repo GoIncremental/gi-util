@@ -1,3 +1,4 @@
+_ = require 'underscore'
 module.exports = (Resource) ->
   count = (query, callback) ->
     if not query.systemId?
@@ -29,6 +30,16 @@ module.exports = (Resource) ->
 
       if options.query? and options.query.systemId?
         query = options.query
+      else if options.query.$and?
+        #Check that at least one of the $and operators contains the systemId query
+        found =  _.find options.query.$and, (queryPart) ->
+          queryPart.systemId?
+        if found
+          query = options.query
+        else
+          callback('systemId not specified as one of the $and conditions', null, 0) if callback
+          return
+
       else
         callback('systemId not specified in query', null, 0) if callback
         return

@@ -2,15 +2,16 @@ _ = require 'underscore'
 mongoose = require 'mongoose'
 require('mongoose-long')(mongoose)
 crudModelFactory = require '../crudModelFactory'
-connectMongo = require 'connect-mongostore'
+connectMongo = require 'connect-mongo-store'
 
 getConnectionString = (conf) ->
   uri = "mongodb://"
   separator = ""
   if conf.servers?
     _.each conf.servers, (server) ->
-      uri += separator +  server.host + ":" + server.port + "/" + conf.name
+      uri += separator +  server.host + ":" + server.port
       separator = ","
+    uri += "/" + conf.name
 
   else
     uri += conf.host + ":" + conf.port + "/" + conf.name
@@ -43,19 +44,20 @@ module.exports =
     mongoose.connection.on 'connected',  () ->
       cb() if cb
 
-  sessionStore: (express, conf) ->
+    mongoose.connection.on 'error', (err) ->
+      cb(err) if cb
+
+  sessionStore: (express, conf, cb) ->
+    uri = getConnectionString(conf)
     MongoStore = connectMongo(express)
 
-    if conf.servers?
-      db =
-        name: conf.name
-        servers: conf.servers
-    else
-      db = 
-        name: conf.name
-        servers: [{ host: conf.host, port: conf.port}]
+    sessionStore = new MongoStore(uri)    
+    sessionStore.on 'connect', () ->
+      cb() if cb
+    
+    sessionStore.on 'error', (err) ->
+      cb(err) if err
 
-    sessionStore = new MongoStore({db: db})    
     sessionStore
 
   crudFactory: crudModelFactory

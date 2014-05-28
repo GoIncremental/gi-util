@@ -169,7 +169,7 @@ angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
     factory = function(resourceName, usePromises) {
-      var all, allCached, allPromise, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
+      var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
       methods = {
         query: {
           method: 'GET',
@@ -342,6 +342,10 @@ angular.module('gi.util').factory('giCrud', [
       count = function() {
         return items.length;
       };
+      clearCache = function() {
+        items = [];
+        return itemsById = {};
+      };
       Socket.emit('watch:' + resourceName);
       Socket.on(resourceName + '_created', function(data) {
         updateMasterList(data);
@@ -364,7 +368,8 @@ angular.module('gi.util').factory('giCrud', [
         destroy: destroy,
         save: save,
         count: count,
-        version: version
+        version: version,
+        clearCache: clearCache
       };
       if (usePromises) {
         exports.all = allPromise;

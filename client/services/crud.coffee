@@ -132,6 +132,10 @@ angular.module('gi.util').factory 'giCrud'
     count = () ->
       items.length
 
+    clearCache = () ->
+      items = []
+      itemsById = {}
+
     Socket.emit 'watch:' + resourceName
 
     Socket.on resourceName + '_created', (data) ->
@@ -156,6 +160,7 @@ angular.module('gi.util').factory 'giCrud'
       save: save
       count: count
       version: version
+      clearCache: clearCache
 
     if usePromises
       exports.all = allPromise

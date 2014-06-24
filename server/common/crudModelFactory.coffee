@@ -19,7 +19,7 @@ module.exports = (Resource) ->
         max = 10000
 
       if options.sort?
-        sort = options.sort
+        sort = 'field ' + options.sort
       else
         sort = {}
 
@@ -46,7 +46,7 @@ module.exports = (Resource) ->
     else
       callback('options must be specfied for find', null, 0) if callback
       return
-    
+
     skipFrom = page * max - max
 
     if max < 1
@@ -64,7 +64,7 @@ module.exports = (Resource) ->
               #safe because max >= 1
               pageCount = Math.ceil(count/max) or 0
               callback(null, results, pageCount) if callback
- 
+
   findOne = (query, callback) ->
     if not query? or not query.systemId?
       callback 'Cannot find ' +
@@ -84,7 +84,7 @@ module.exports = (Resource) ->
     query[key] = value
 
     @findOne query, callback
-  
+
   findById = (id, systemId, callback) ->
     @findOneBy '_id', id, systemId, callback
 
@@ -117,7 +117,7 @@ module.exports = (Resource) ->
           Resource.remove {_id: resource._id, systemId: systemId}, callback
         else
           callback null
-  
+
   find: find
   findById: findById
   findOne: findOne

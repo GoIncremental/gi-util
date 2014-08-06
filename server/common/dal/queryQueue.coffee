@@ -27,7 +27,7 @@ processQueryQueue = () ->
 
     request.on 'row', (columns) ->
       obj = {}
-        
+
       columns.forEach (column) ->
         obj[column.metadata.colName] = column.value
 
@@ -37,6 +37,8 @@ processQueryQueue = () ->
       if err
         console.log 'error with sql connection ' + err
         nextQuery.cb err
+        #recursive call to process anything else on the queue
+        processQueryQueue()
       else
         conn.execSql request
 

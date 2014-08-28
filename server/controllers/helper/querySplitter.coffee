@@ -26,8 +26,16 @@ processSplit = (split) ->
       when "gte"
         result =
           $gte: splits2[1]
+      when "exists"
+        result =
+          $exists: (splits2[1] == "true") ? true : false
   else
     result = split
+
+    switch split
+      when "isnull"
+        result =
+          $type: 10
 
   result
 
@@ -44,4 +52,3 @@ processSplits = (splits, k) ->
 module.exports =
   processSplit: processSplit
   processSplits: processSplits
-

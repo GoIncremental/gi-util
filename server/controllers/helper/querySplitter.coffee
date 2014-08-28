@@ -28,7 +28,7 @@ processSplit = (split) ->
           $gte: splits2[1]
       when "exists"
         result =
-          $exists: (splits2[1] == "true") ? true : false
+          $exists: splits2[1] is "true"
   else
     result = split
 

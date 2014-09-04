@@ -5,7 +5,10 @@ async = require 'async'
 module.exports = (model) ->
 
   index = (req, res, next) ->
-    options = helper.getOptions req, model
+    if req.method.toUpperCase() is "POST"
+      options = req.body
+    else
+      options = helper.getOptions req, model
 
     model.find options
     , (err, result, pageCount) ->
@@ -17,7 +20,6 @@ module.exports = (model) ->
           next()
         else
           res.json 200, result
-
 
   create = (req, res, next) ->
     if _.isArray req.body

@@ -17,6 +17,8 @@ routeResource = (name, app, middleware, controller) ->
   , middleware, controller.show, @_respondIfOk)
   app.del( '/api/' + name + '/:id'
   , middleware, controller.destroy, @_respondIfOk)
+  app.post('/api/' + name + '/query'
+  , middleware, controller.index, @_respondIfOk)
 
 exports.routeResource = routeResource
 exports._respondIfOk = respondIfOk

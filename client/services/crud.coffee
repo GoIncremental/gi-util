@@ -17,7 +17,14 @@ angular.module('gi.util').factory 'giCrud'
         params: {}
         isArray: false
 
+    queryMethods =
+      query:
+        method: 'POST'
+        params: {}
+        isArray: false
+
     resource = $resource('/api/' + resourceName + '/:id', {}, methods)
+    queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods)
 
     items = []
     itemsById = {}
@@ -37,6 +44,8 @@ angular.module('gi.util').factory 'giCrud'
     all = (params, callback) ->
       options = {}
       cacheable = true
+      r = resource
+
       if _.isFunction(params)
         callback = params
         if items.length > 0
@@ -46,7 +55,10 @@ angular.module('gi.util').factory 'giCrud'
         cacheable = false
         options = params
 
-      resource.query options, (results) ->
+        if params.query?
+          r = queryResource
+
+      r.query options, (results) ->
         if cacheable
           items = results
           angular.forEach results, (item, index) ->
@@ -57,13 +69,14 @@ angular.module('gi.util').factory 'giCrud'
 
     allPromise = (params) ->
       deferred = $q.defer()
+
       if params
         all params, (results) ->
           deferred.resolve results
       else
         all (results) ->
           deferred.resolve results
-      
+
       deferred.promise
 
     save = (item, success, fail) ->
@@ -103,14 +116,14 @@ angular.module('gi.util').factory 'giCrud'
         if items.length > 0
           updateMasterList item
         callback item if callback
-    
+
     getPromise = (id) ->
       deferred = $q.defer()
       get id, (item) ->
         deferred.resolve item
 
       deferred.promise
-    
+
     destroy = (id, callback) ->
       resource.delete {id: id}, () ->
         removed = false
@@ -120,9 +133,9 @@ angular.module('gi.util').factory 'giCrud'
              if item._id is id
               removed = true
               items.splice index, 1
-              
+
         callback() if callback
-    
+
     destroyPromise = (id) ->
       deferred = $q.defer()
       destroy id, () ->
@@ -141,7 +154,7 @@ angular.module('gi.util').factory 'giCrud'
     Socket.on resourceName + '_created', (data) ->
       updateMasterList data
       _version += 1
-    
+
     Socket.on resourceName + '_updated', (data) ->
       updateMasterList data
       _version += 1
@@ -149,7 +162,7 @@ angular.module('gi.util').factory 'giCrud'
     _version = 0
     version = () ->
       _version
-    
+
     exports =
       query: all
       all: all

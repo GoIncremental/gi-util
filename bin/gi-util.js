@@ -1,4 +1,3 @@
-
 if (typeof exports === "undefined" || exports === null) {
   if (!this.gi) {
     this.gi = {};
@@ -169,7 +168,7 @@ angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
     factory = function(resourceName, usePromises) {
-      var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, resource, save, savePromise, updateMasterList, version, _version;
+      var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, queryMethods, queryResource, resource, save, savePromise, updateMasterList, version, _version;
       methods = {
         query: {
           method: 'GET',
@@ -187,7 +186,15 @@ angular.module('gi.util').factory('giCrud', [
           isArray: false
         }
       };
+      queryMethods = {
+        query: {
+          method: 'POST',
+          params: {},
+          isArray: true
+        }
+      };
       resource = $resource('/api/' + resourceName + '/:id', {}, methods);
+      queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods);
       items = [];
       itemsById = {};
       updateMasterList = function(newItem) {
@@ -207,9 +214,10 @@ angular.module('gi.util').factory('giCrud', [
         itemsById[newItem._id] = newItem;
       };
       all = function(params, callback) {
-        var cacheable, options;
+        var cacheable, options, r;
         options = {};
         cacheable = true;
+        r = resource;
         if (_.isFunction(params)) {
           callback = params;
           if (items.length > 0) {
@@ -221,8 +229,11 @@ angular.module('gi.util').factory('giCrud', [
         } else {
           cacheable = false;
           options = params;
+          if (params.query != null) {
+            r = queryResource;
+          }
         }
-        return resource.query(options, function(results) {
+        return r.query(options, function(results) {
           if (cacheable) {
             items = results;
             angular.forEach(results, function(item, index) {

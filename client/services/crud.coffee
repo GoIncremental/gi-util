@@ -21,7 +21,7 @@ angular.module('gi.util').factory 'giCrud'
       query:
         method: 'POST'
         params: {}
-        isArray: false
+        isArray: true
 
     resource = $resource('/api/' + resourceName + '/:id', {}, methods)
     queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods)

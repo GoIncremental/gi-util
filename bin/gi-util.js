@@ -1,4 +1,3 @@
-
 if (typeof exports === "undefined" || exports === null) {
   if (!this.gi) {
     this.gi = {};
@@ -191,7 +190,7 @@ angular.module('gi.util').factory('giCrud', [
         query: {
           method: 'POST',
           params: {},
-          isArray: false
+          isArray: true
         }
       };
       resource = $resource('/api/' + resourceName + '/:id', {}, methods);

@@ -1,7 +1,7 @@
 {
-  "author": "David Bochenski",
+  "author": "Go Incremental Limited",
   "name": "gi-util",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "main": "./server/index.coffee",
   "scripts": {
     "test": "grunt ci"

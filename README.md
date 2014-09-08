@@ -4,6 +4,12 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v0.3.15
+- Ensure query method expects an array response
+
+v0.3.14
+- bin/gi-util.js was not included in previous release
+
 v0.3.13
 - Added POST query support via /api/[resource_name]/query route
 

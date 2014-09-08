@@ -7,6 +7,8 @@ module.exports = (model) ->
   index = (req, res, next) ->
     if req.method.toUpperCase() is "POST"
       options = req.body
+      if options.query?
+        options.query.systemId = req.systemId
     else
       options = helper.getOptions req, model
 

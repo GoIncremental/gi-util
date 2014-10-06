@@ -28,6 +28,10 @@ module.exports = (Resource) ->
       else
         page = 1
 
+      if options.populate?
+        populate = options.populate
+      else populate = null
+
       if options.query? and options.query.systemId?
         query = options.query
       else if options.query.$and?
@@ -53,6 +57,9 @@ module.exports = (Resource) ->
       callback(null, [], 0) if callback
     else
       command = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
+      if options.populate?
+        command.populate populate
+
       command.exec (err, results) ->
         if err
           callback err, null, 0

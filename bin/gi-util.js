@@ -1,3 +1,4 @@
+
 if (typeof exports === "undefined" || exports === null) {
   if (!this.gi) {
     this.gi = {};
@@ -167,8 +168,11 @@ angular.module('gi.util', ['ngResource']);
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
-    factory = function(resourceName, usePromises) {
+    factory = function(resourceName, usePromises, prefix) {
       var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, queryMethods, queryResource, resource, save, savePromise, updateMasterList, version, _version;
+      if (prefix == null) {
+        prefix = '/api';
+      }
       methods = {
         query: {
           method: 'GET',
@@ -193,8 +197,8 @@ angular.module('gi.util').factory('giCrud', [
           isArray: true
         }
       };
-      resource = $resource('/api/' + resourceName + '/:id', {}, methods);
-      queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods);
+      resource = $resource(prefix + '/' + resourceName + '/:id', {}, methods);
+      queryResource = $resource(prefix + '/' + resourceName + '/query', {}, queryMethods);
       items = [];
       itemsById = {};
       updateMasterList = function(newItem) {

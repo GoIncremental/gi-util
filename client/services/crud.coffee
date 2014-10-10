@@ -2,7 +2,10 @@ angular.module('gi.util').factory 'giCrud'
 , ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 
-  factory = (resourceName, usePromises) ->
+  factory = (resourceName, usePromises, prefix) ->
+    if not prefix?
+      prefix = '/api'
+
     methods =
       query:
         method: 'GET'
@@ -23,8 +26,8 @@ angular.module('gi.util').factory 'giCrud'
         params: {}
         isArray: true
 
-    resource = $resource('/api/' + resourceName + '/:id', {}, methods)
-    queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods)
+    resource = $resource(prefix + '/' + resourceName + '/:id', {}, methods)
+    queryResource = $resource(prefix + '/' + resourceName + '/query', {}, queryMethods)
 
     items = []
     itemsById = {}

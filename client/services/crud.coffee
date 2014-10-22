@@ -2,7 +2,7 @@ angular.module('gi.util').factory 'giCrud'
 , ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 
-  factory = (resourceName, usePromises, prefix, idField) ->
+  factory = (resourceName, prefix, idField) ->
 
     if not prefix?
       prefix = '/api'
@@ -48,69 +48,53 @@ angular.module('gi.util').factory 'giCrud'
       itemsById[newItem[idField]] = newItem
       return
 
-    all = (params, callback) ->
+    all = (params) ->
+      deferred = $q.defer()
       options = {}
       cacheable = true
       r = resource
 
-      if _.isFunction(params)
-        callback = params
-        if items.length > 0
-          callback items if callback
-          return
+      if not params? and items.length > 0
+        deferred.resolve items
       else
-        cacheable = false
+        if params?
+          cacheable = false
+
         options = params
 
-        if params.query?
+        if params?.query?
           r = queryResource
 
-      r.query options, (results) ->
-        if cacheable
-          items = results
-          angular.forEach results, (item, index) ->
-            itemsById[item[idField]] = item
-            return
+        r.query options, (results) ->
+          if cacheable
+            items = results
+            angular.forEach results, (item, index) ->
+              itemsById[item[idField]] = item
 
-        callback results if callback
-
-    allPromise = (params) ->
-      deferred = $q.defer()
-
-      if params
-        all params, (results) ->
-          deferred.resolve results
-      else
-        all (results) ->
           deferred.resolve results
 
       deferred.promise
 
-    save = (item, success, fail) ->
+    save = (item) ->
+      deferred = $q.defer()
+
       if item[idField]
         #we are updating
         resource.save {id: item[idField]}, item, (result) ->
           updateMasterList result
-          success(result) if success
+          deferred.resolve result
         , (failure) ->
-          fail(failure) if fail
-
+          deferred.reject failure
       else
         #we are createing a new object on the server
         resource.create {}, item, (result) ->
           updateMasterList result
-          success(result) if success
+          deferred.resolve result
         , (failure) ->
-          fail(failure) if fail
-
-    savePromise = (item) ->
-      deferred = $q.defer()
-      save item, (res) ->
-        deferred.resolve res
-      , (err) ->
-        deferred.reject err
+          deferred.reject failure
 
       deferred.promise
+
 
     getCached = (id) ->
       return itemsById[id]
@@ -118,20 +102,17 @@ angular.module('gi.util').factory 'giCrud'
     allCached = () ->
       return items
 
-    get = (id, callback) ->
+    get = (id) ->
+      deferred = $q.defer()
       resource.get {id: id}, (item) ->
         if items.length > 0
           updateMasterList item
-        callback item if callback
-
-    getPromise = (id) ->
-      deferred = $q.defer()
-      get id, (item) ->
         deferred.resolve item
 
       deferred.promise
 
-    destroy = (id, callback) ->
+    destroy = (id) ->
+      deferred = $q.defer()
       resource.delete {id: id}, () ->
         removed = false
         delete itemsById[id]
@@ -141,12 +122,8 @@ angular.module('gi.util').factory 'giCrud'
               removed = true
               items.splice index, 1
 
-        callback() if callback
-
-    destroyPromise = (id) ->
-      deferred = $q.defer()
-      destroy id, () ->
         deferred.resolve()
+
       deferred.promise
 
     count = () ->
@@ -181,13 +158,6 @@ angular.module('gi.util').factory 'giCrud'
       count: count
       version: version
       clearCache: clearCache
-
-    if usePromises
-      exports.all = allPromise
-      exports.query = allPromise
-      exports.get = getPromise
-      exports.save = savePromise
-      exports.destroy = destroyPromise
 
     exports
 

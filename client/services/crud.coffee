@@ -2,9 +2,13 @@ angular.module('gi.util').factory 'giCrud'
 , ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 
-  factory = (resourceName, usePromises, prefix) ->
+  factory = (resourceName, usePromises, prefix, idField) ->
+
     if not prefix?
       prefix = '/api'
+
+    if not idField?
+      idField = '_id'
 
     methods =
       query:
@@ -36,12 +40,12 @@ angular.module('gi.util').factory 'giCrud'
       replaced = false
       angular.forEach items, (item, index) ->
         unless replaced
-          if newItem._id is item._id
+          if newItem[idField] is item[idField]
             replaced = true
             items[index] = newItem
       unless replaced
         items.push newItem
-      itemsById[newItem._id] = newItem
+      itemsById[newItem[idField]] = newItem
       return
 
     all = (params, callback) ->
@@ -65,7 +69,7 @@ angular.module('gi.util').factory 'giCrud'
         if cacheable
           items = results
           angular.forEach results, (item, index) ->
-            itemsById[item._id] = item
+            itemsById[item[idField]] = item
             return
 
         callback results if callback
@@ -83,9 +87,9 @@ angular.module('gi.util').factory 'giCrud'
       deferred.promise
 
     save = (item, success, fail) ->
-      if item._id
+      if item[idField]
         #we are updating
-        resource.save {id: item._id}, item, (result) ->
+        resource.save {id: item[idField]}, item, (result) ->
           updateMasterList result
           success(result) if success
         , (failure) ->
@@ -133,7 +137,7 @@ angular.module('gi.util').factory 'giCrud'
         delete itemsById[id]
         angular.forEach items, (item, index) ->
           unless removed
-             if item._id is id
+             if item[idField] is id
               removed = true
               items.splice index, 1
 

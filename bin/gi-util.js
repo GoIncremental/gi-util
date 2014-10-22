@@ -168,10 +168,13 @@ angular.module('gi.util', ['ngResource']);
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
-    factory = function(resourceName, usePromises, prefix) {
+    factory = function(resourceName, usePromises, prefix, idField) {
       var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, queryMethods, queryResource, resource, save, savePromise, updateMasterList, version, _version;
       if (prefix == null) {
         prefix = '/api';
+      }
+      if (idField == null) {
+        idField = '_id';
       }
       methods = {
         query: {
@@ -206,7 +209,7 @@ angular.module('gi.util').factory('giCrud', [
         replaced = false;
         angular.forEach(items, function(item, index) {
           if (!replaced) {
-            if (newItem._id === item._id) {
+            if (newItem[idField] === item[idField]) {
               replaced = true;
               return items[index] = newItem;
             }
@@ -215,7 +218,7 @@ angular.module('gi.util').factory('giCrud', [
         if (!replaced) {
           items.push(newItem);
         }
-        itemsById[newItem._id] = newItem;
+        itemsById[newItem[idField]] = newItem;
       };
       all = function(params, callback) {
         var cacheable, options, r;
@@ -241,7 +244,7 @@ angular.module('gi.util').factory('giCrud', [
           if (cacheable) {
             items = results;
             angular.forEach(results, function(item, index) {
-              itemsById[item._id] = item;
+              itemsById[item[idField]] = item;
             });
           }
           if (callback) {
@@ -264,9 +267,9 @@ angular.module('gi.util').factory('giCrud', [
         return deferred.promise;
       };
       save = function(item, success, fail) {
-        if (item._id) {
+        if (item[idField]) {
           return resource.save({
-            id: item._id
+            id: item[idField]
           }, item, function(result) {
             updateMasterList(result);
             if (success) {
@@ -335,7 +338,7 @@ angular.module('gi.util').factory('giCrud', [
           delete itemsById[id];
           angular.forEach(items, function(item, index) {
             if (!removed) {
-              if (item._id === id) {
+              if (item[idField] === id) {
                 removed = true;
                 return items.splice(index, 1);
               }

@@ -4,6 +4,8 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.0
+- BREAKING CHANGE: giCrud Angular service now only uses promises.  Consumers of this service using callbacks must now switch to using promises, and those already using promises must remove the second argument to calls to Crud.factory() as this is no longer a boolean defining whether or not to use promises
 v0.3.18
 - Added option to override /api prefix in client angular crud service
 

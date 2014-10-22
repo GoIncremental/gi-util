@@ -168,8 +168,8 @@ angular.module('gi.util', ['ngResource']);
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
-    factory = function(resourceName, usePromises, prefix, idField) {
-      var all, allCached, allPromise, clearCache, count, destroy, destroyPromise, exports, get, getCached, getPromise, items, itemsById, methods, queryMethods, queryResource, resource, save, savePromise, updateMasterList, version, _version;
+    factory = function(resourceName, prefix, idField) {
+      var all, allCached, clearCache, count, destroy, exports, get, getCached, items, itemsById, methods, queryMethods, queryResource, resource, save, updateMasterList, version, _version;
       if (prefix == null) {
         prefix = '/api';
       }
@@ -220,87 +220,54 @@ angular.module('gi.util').factory('giCrud', [
         }
         itemsById[newItem[idField]] = newItem;
       };
-      all = function(params, callback) {
-        var cacheable, options, r;
+      all = function(params) {
+        var cacheable, deferred, options, r;
+        deferred = $q.defer();
         options = {};
         cacheable = true;
         r = resource;
-        if (_.isFunction(params)) {
-          callback = params;
-          if (items.length > 0) {
-            if (callback) {
-              callback(items);
-            }
-            return;
-          }
+        if ((params == null) && items.length > 0) {
+          deferred.resolve(items);
         } else {
-          cacheable = false;
+          if (params != null) {
+            cacheable = false;
+          }
           options = params;
-          if (params.query != null) {
+          if ((params != null ? params.query : void 0) != null) {
             r = queryResource;
           }
-        }
-        return r.query(options, function(results) {
-          if (cacheable) {
-            items = results;
-            angular.forEach(results, function(item, index) {
-              itemsById[item[idField]] = item;
-            });
-          }
-          if (callback) {
-            return callback(results);
-          }
-        });
-      };
-      allPromise = function(params) {
-        var deferred;
-        deferred = $q.defer();
-        if (params) {
-          all(params, function(results) {
-            return deferred.resolve(results);
-          });
-        } else {
-          all(function(results) {
+          r.query(options, function(results) {
+            if (cacheable) {
+              items = results;
+              angular.forEach(results, function(item, index) {
+                return itemsById[item[idField]] = item;
+              });
+            }
             return deferred.resolve(results);
           });
         }
         return deferred.promise;
       };
-      save = function(item, success, fail) {
+      save = function(item) {
+        var deferred;
+        deferred = $q.defer();
         if (item[idField]) {
-          return resource.save({
+          resource.save({
             id: item[idField]
           }, item, function(result) {
             updateMasterList(result);
-            if (success) {
-              return success(result);
-            }
+            return deferred.resolve(result);
           }, function(failure) {
-            if (fail) {
-              return fail(failure);
-            }
+            return deferred.reject(failure);
           });
         } else {
-          return resource.create({}, item, function(result) {
+          resource.create({}, item, function(result) {
             updateMasterList(result);
-            if (success) {
-              return success(result);
-            }
+            return deferred.resolve(result);
           }, function(failure) {
-            if (fail) {
-              return fail(failure);
-            }
+            return deferred.reject(failure);
           });
         }
-      };
-      savePromise = function(item) {
-        var deferred;
-        deferred = $q.defer();
-        save(item, function(res) {
-          return deferred.resolve(res);
-        }, function(err) {
-          return deferred.reject(err);
-        });
         return deferred.promise;
       };
       getCached = function(id) {
@@ -309,28 +276,23 @@ angular.module('gi.util').factory('giCrud', [
       allCached = function() {
         return items;
       };
-      get = function(id, callback) {
-        return resource.get({
+      get = function(id) {
+        var deferred;
+        deferred = $q.defer();
+        resource.get({
           id: id
         }, function(item) {
           if (items.length > 0) {
             updateMasterList(item);
           }
-          if (callback) {
-            return callback(item);
-          }
-        });
-      };
-      getPromise = function(id) {
-        var deferred;
-        deferred = $q.defer();
-        get(id, function(item) {
           return deferred.resolve(item);
         });
         return deferred.promise;
       };
-      destroy = function(id, callback) {
-        return resource["delete"]({
+      destroy = function(id) {
+        var deferred;
+        deferred = $q.defer();
+        resource["delete"]({
           id: id
         }, function() {
           var removed;
@@ -344,15 +306,6 @@ angular.module('gi.util').factory('giCrud', [
               }
             }
           });
-          if (callback) {
-            return callback();
-          }
-        });
-      };
-      destroyPromise = function(id) {
-        var deferred;
-        deferred = $q.defer();
-        destroy(id, function() {
           return deferred.resolve();
         });
         return deferred.promise;
@@ -389,13 +342,6 @@ angular.module('gi.util').factory('giCrud', [
         version: version,
         clearCache: clearCache
       };
-      if (usePromises) {
-        exports.all = allPromise;
-        exports.query = allPromise;
-        exports.get = getPromise;
-        exports.save = savePromise;
-        exports.destroy = destroyPromise;
-      }
       return exports;
     };
     return {

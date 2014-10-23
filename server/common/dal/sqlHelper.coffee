@@ -7,7 +7,18 @@ generateWhereClause = (query) ->
       clause = " WHERE "
     else
       clause = clause + " AND "
-    clause = clause + key + " = '" + value + "'"
+
+    if value.$gt?
+      clause = clause + key + " > '" + value.$gt + "'"
+    else if value.$gte?
+      clause = clause + key + " >= '" + value.$gte + "'"
+    else if value.$lt?
+      clause = clause + key + " < '" + value.$lt + "'"
+    else if value.$lte?
+      clause = clause + key + " <= '" + value.$lte + "'"
+    else
+      clause = clause + key + " = '" + value + "'"
+
   clause
 
 module.exports =

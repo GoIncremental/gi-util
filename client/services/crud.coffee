@@ -24,29 +24,53 @@ angular.module('gi.util').factory 'giCrud'
         params: {}
         isArray: false
 
+    bulkMethods =
+      save:
+        method: 'PUT'
+        params: {}
+        isArray: true
+
     queryMethods =
       query:
         method: 'POST'
         params: {}
         isArray: true
 
-    resource = $resource(prefix + '/' + resourceName + '/:id', {}, methods)
-    queryResource = $resource(prefix + '/' + resourceName + '/query', {}, queryMethods)
+    bulkResource = $resource('/api/' + resourceName + '', {}, bulkMethods)
+    resource = $resource('/api/' + resourceName + '/:id', {}, methods)
+    queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods)
 
     items = []
     itemsById = {}
 
     updateMasterList = (newItem) ->
       replaced = false
-      angular.forEach items, (item, index) ->
+      if angular.isArray newItem
+        angular.forEach newItem, (newRec, i) ->
+          # Nice quick check if the item already exists in the master list
+          replaced = false
+          if itemsById[newRec[idField]]?
+            # Find and update
+            angular.forEach items, (item, j) ->
+              unless replaced
+                if item[idField] is newRec[idField]
+                  items[j] = newRec
+                  replaced = true
+          else
+            items.push newRec
+          itemsById[newRec[idField]] = newRec
+        return
+      else
+        replaced = false
+        angular.forEach items, (item, index) ->
+          unless replaced
+            if newItem[idField] is item[idField]
+              replaced = true
+              items[index] = newItem
         unless replaced
-          if newItem[idField] is item[idField]
-            replaced = true
-            items[index] = newItem
-      unless replaced
-        items.push newItem
-      itemsById[newItem[idField]] = newItem
-      return
+          items.push newItem
+        itemsById[newItem[idField]] = newItem
+        return
 
     all = (params) ->
       deferred = $q.defer()
@@ -75,23 +99,36 @@ angular.module('gi.util').factory 'giCrud'
 
       deferred.promise
 
-    save = (item) ->
-      deferred = $q.defer()
-
-      if item[idField]
-        #we are updating
-        resource.save {id: item[idField]}, item, (result) ->
+    save = (item, success, fail) ->
+      if angular.isArray item
+        bulkResource.save {}, item, (result) ->
           updateMasterList result
           deferred.resolve result
         , (failure) ->
-          deferred.reject failure
+          fail(failure) if fail
       else
-        #we are createing a new object on the server
-        resource.create {}, item, (result) ->
-          updateMasterList result
-          deferred.resolve result
-        , (failure) ->
-          deferred.reject failure
+        if item[idField]
+          #we are updating
+          resource.save {id: item[idField]}, item, (result) ->
+            updateMasterList result
+            success(result) if success
+          , (failure) ->
+            fail(failure) if fail
+
+        else
+          #we are createing a new object on the server
+          resource.create {}, item, (result) ->
+            updateMasterList result
+            success(result) if success
+          , (failure) ->
+            fail(failure) if fail
+
+    savePromise = (item) ->
+      deferred = $q.defer()
+      save item, (res) ->
+        deferred.resolve res
+      , (err) ->
+        deferred.reject err
 
       deferred.promise
 

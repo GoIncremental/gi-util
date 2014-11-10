@@ -9,6 +9,8 @@ routeResource = (name, app, middleware, controller) ->
   , middleware, controller.index, @_respondIfOk)
   app.post('/api/' + name
   , middleware, controller.create, @_respondIfOk)
+  app.put('/api/' + name
+  , middleware, controller.bulkUpdate, @_respondIfOk)
   app.get( '/api/' + name + '/count'
   , middleware, controller.count, @_respondIfOk)
   app.put( '/api/' + name + '/:id'

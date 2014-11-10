@@ -23,6 +23,45 @@ module.exports = (model) ->
         else
           res.json 200, result
 
+  bulkUpdate = (req, res, next) ->
+    errors = []
+    results = []
+    async.each req.body, (obj, cb) ->
+      obj.systemId = req.systemId
+      if obj._id?
+        model.update obj._id, obj, (err, result) ->
+          if err
+            errors.push {message: err, obj: obj}
+            cb()
+          else if result
+            results.push {message: "ok", obj: obj}
+            cb()
+          else
+            errors.push {message: "create failed for reasons unknown", obj: obj}
+            cb()
+      else
+        model.create obj, (err, result) ->
+          if err
+            errors.push {message: err, obj: obj}
+            cb()
+          else if result
+            results.push {message: "ok", obj: obj}
+            cb()
+          else
+            errors.push {message: "create failed for reasons unknown", obj: obj}
+            cb()
+    , () ->
+      resultCode = 200
+      if errors.length > 0
+        resultCode = 500
+      if next
+        res.giResult = errors.concat results
+        res.giResultCode = resultCode
+        next()
+      else
+        res.json resultCode, errors.concat results
+
+
   create = (req, res, next) ->
     if _.isArray req.body
       errors = []
@@ -134,3 +173,4 @@ module.exports = (model) ->
   update: update
   destroy: destroy
   count: count
+  bulkUpdate: bulkUpdate

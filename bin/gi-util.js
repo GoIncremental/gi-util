@@ -169,7 +169,7 @@ angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
     var factory;
     factory = function(resourceName, prefix, idField) {
-      var all, allCached, bulkMethods, bulkResource, clearCache, count, destroy, exports, get, getCached, items, itemsById, methods, queryMethods, queryResource, resource, save, savePromise, updateMasterList, version, _version;
+      var all, allCached, bulkMethods, bulkResource, clearCache, count, destroy, exports, get, getCached, items, itemsById, methods, queryMethods, queryResource, resource, save, updateMasterList, version, _version;
       if (prefix == null) {
         prefix = '/api';
       }
@@ -276,52 +276,35 @@ angular.module('gi.util').factory('giCrud', [
         }
         return deferred.promise;
       };
-      save = function(item, success, fail) {
+      save = function(item) {
+        var deferred;
+        deferred = $q.defer();
         if (angular.isArray(item)) {
-          return bulkResource.save({}, item, function(result) {
+          bulkResource.save({}, item, function(result) {
             updateMasterList(result);
             return deferred.resolve(result);
           }, function(failure) {
-            if (fail) {
-              return fail(failure);
-            }
+            return deferred.reject(failure);
           });
         } else {
           if (item[idField]) {
-            return resource.save({
+            resource.save({
               id: item[idField]
             }, item, function(result) {
               updateMasterList(result);
-              if (success) {
-                return success(result);
-              }
+              return deferred.resolve(result);
             }, function(failure) {
-              if (fail) {
-                return fail(failure);
-              }
+              return deferred.reject(failure);
             });
           } else {
-            return resource.create({}, item, function(result) {
+            resource.create({}, item, function(result) {
               updateMasterList(result);
-              if (success) {
-                return success(result);
-              }
+              return deferred.resolve(result);
             }, function(failure) {
-              if (fail) {
-                return fail(failure);
-              }
+              return deferred.reject(failure);
             });
           }
         }
-      };
-      savePromise = function(item) {
-        var deferred;
-        deferred = $q.defer();
-        save(item, function(res) {
-          return deferred.resolve(res);
-        }, function(err) {
-          return deferred.reject(err);
-        });
         return deferred.promise;
       };
       getCached = function(id) {

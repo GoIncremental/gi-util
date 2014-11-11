@@ -99,39 +99,31 @@ angular.module('gi.util').factory 'giCrud'
 
       deferred.promise
 
-    save = (item, success, fail) ->
+    save = (item) ->
+      deferred = $q.defer()
       if angular.isArray item
         bulkResource.save {}, item, (result) ->
           updateMasterList result
           deferred.resolve result
         , (failure) ->
-          fail(failure) if fail
+          deferred.reject failure
       else
         if item[idField]
           #we are updating
           resource.save {id: item[idField]}, item, (result) ->
             updateMasterList result
-            success(result) if success
+            deferred.resolve result
           , (failure) ->
-            fail(failure) if fail
-
+            deferred.reject failure
         else
           #we are createing a new object on the server
           resource.create {}, item, (result) ->
             updateMasterList result
-            success(result) if success
+            deferred.resolve result
           , (failure) ->
-            fail(failure) if fail
-
-    savePromise = (item) ->
-      deferred = $q.defer()
-      save item, (res) ->
-        deferred.resolve res
-      , (err) ->
-        deferred.reject err
+            deferred.reject failure
 
       deferred.promise
-
 
     getCached = (id) ->
       return itemsById[id]

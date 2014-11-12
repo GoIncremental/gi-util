@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.4
+- reject promises in Services crud when http calls to the resource
+
 v1.0.3
 - Corrected issue with last release re save / savePromise
 

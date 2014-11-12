@@ -272,6 +272,8 @@ angular.module('gi.util').factory('giCrud', [
               });
             }
             return deferred.resolve(results);
+          }, function(err) {
+            return deferred.reject(err);
           });
         }
         return deferred.promise;
@@ -323,6 +325,8 @@ angular.module('gi.util').factory('giCrud', [
             updateMasterList(item);
           }
           return deferred.resolve(item);
+        }, function(err) {
+          return deferred.reject(err);
         });
         return deferred.promise;
       };
@@ -344,6 +348,8 @@ angular.module('gi.util').factory('giCrud', [
             }
           });
           return deferred.resolve();
+        }, function(err) {
+          return deferred.reject(err);
         });
         return deferred.promise;
       };

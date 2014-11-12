@@ -96,6 +96,8 @@ angular.module('gi.util').factory 'giCrud'
               itemsById[item[idField]] = item
 
           deferred.resolve results
+        , (err) ->
+          deferred.reject err
 
       deferred.promise
 
@@ -137,6 +139,8 @@ angular.module('gi.util').factory 'giCrud'
         if items.length > 0
           updateMasterList item
         deferred.resolve item
+      , (err) ->
+        deferred.reject err
 
       deferred.promise
 
@@ -152,6 +156,8 @@ angular.module('gi.util').factory 'giCrud'
               items.splice index, 1
 
         deferred.resolve()
+      , (err) ->
+        deferred.reject err
 
       deferred.promise
 

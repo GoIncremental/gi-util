@@ -34,7 +34,7 @@ module.exports = (model) ->
             errors.push {message: err, obj: obj}
             cb()
           else if result
-            results.push {message: "ok", obj: obj}
+            results.push {message: "ok", obj: result}
             cb()
           else
             errors.push {message: "create failed for reasons unknown", obj: obj}
@@ -45,7 +45,7 @@ module.exports = (model) ->
             errors.push {message: err, obj: obj}
             cb()
           else if result
-            results.push {message: "ok", obj: obj}
+            results.push {message: "ok", obj: result}
             cb()
           else
             errors.push {message: "create failed for reasons unknown", obj: obj}

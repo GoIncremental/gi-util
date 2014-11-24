@@ -29,6 +29,9 @@ processSplit = (split) ->
       when "exists"
         result =
           $exists: splits2[1] is "true"
+      when "startswith"
+        result =
+          $regex: new RegExp("^" + splits2[1], "i")
   else
     result = split
 

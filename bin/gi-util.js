@@ -1,3 +1,4 @@
+
 if (typeof exports === "undefined" || exports === null) {
   if (!this.gi) {
     this.gi = {};

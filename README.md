@@ -4,6 +4,10 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.5
+- return persisted object from bulk upserts and inserts
+- add 'starts with' as a query option
+
 v1.0.4
 - reject promises in Services crud when http calls to the resource
 

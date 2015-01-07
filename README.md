@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.6
+- client crud now exports 'cache' to allow you to update the cached items yourself
+
 v1.0.5
 - return persisted object from bulk upserts and inserts
 - add 'starts with' as a query option

@@ -185,6 +185,7 @@ angular.module('gi.util').factory 'giCrud'
     exports =
       query: all
       all: all
+      cache: updateMasterList
       get: get
       getCached: getCached
       allCached: allCached

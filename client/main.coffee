@@ -8,5 +8,6 @@ require
     '../common/timePatterns'
     'services/crud'
     'services/socket'
+    'services/geo'
   ], () ->
     return

@@ -1,1 +1,1 @@
-angular.module 'gi.util', ['ngResource']
+angular.module 'gi.util', ['ngResource', 'ngCookies']

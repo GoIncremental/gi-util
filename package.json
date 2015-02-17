@@ -11,19 +11,20 @@
     "url": "git://github.com/goincremental/gi-util.git"
   },
   "dependencies": {
-    "coffee-script": "~1.7.1",
-    "underscore": "~1.4.4",
-    "moment": "~2.0.0",
     "async": "~0.2.8",
-    "unorm": "~1.0.5",
-    "sinon": "~1.7.3",
     "chai": "~1.7.2",
+    "coffee-script": "~1.7.1",
+    "connect-mongo-store": "^0.1.8",
+    "connect-mongostore": "^0.1.0",
+    "moment": "~2.0.0",
     "mongoose": "3.8.8",
     "mongoose-long": "0.0.2",
     "q": "~0.9.7",
+    "request": "^2.53.0",
+    "sinon": "~1.7.3",
     "tedious": "~0.1.5",
-    "connect-mongostore": "^0.1.0",
-    "connect-mongo-store": "^0.1.8"
+    "underscore": "~1.4.4",
+    "unorm": "~1.0.5"
   },
   "engines": {
     "node": ">= 0.10.0"

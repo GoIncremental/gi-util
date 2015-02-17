@@ -7,15 +7,15 @@ angular.module('gi.util').factory 'giGeo'
   country: () ->
 
     deferred = $q.defer()
-    country = $cookies.get(cookieID)
-    if not country?
-      $http.get("http://ipinfo.io/country").success( (c) ->
-        $cookies.put(cookieID, c)
-        deferred.resolve c
+    geoInfo = $cookies.get(cookieID)
+    if not geoInfo?
+      $http.get("/api/geo/country").success( (info) ->
+        $cookies.put(cookieID, info)
+        deferred.resolve info.countryCode
       ).error (data) ->
         deferred.reject data
     else
-      deferred.resolve country
+      deferred.resolve geoInfo.countryCode
 
     deferred.promise
 ]

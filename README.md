@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.7
+- client now has giGeo service that allows lookup of country based on ip (1000 req / day)
+
 v1.0.6
 - client crud now exports 'cache' to allow you to update the cached items yourself
 

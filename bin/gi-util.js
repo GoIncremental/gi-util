@@ -1,4 +1,3 @@
-
 if (typeof exports === "undefined" || exports === null) {
   if (!this.gi) {
     this.gi = {};
@@ -163,7 +162,7 @@ if (typeof exports === "undefined" || exports === null) {
   };
 })((typeof exports !== "undefined" && exports !== null ? exports : this.gi.util.common['timePatterns'] = {}));
 
-angular.module('gi.util', ['ngResource']);
+angular.module('gi.util', ['ngResource', 'ngCookies']);
 
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
@@ -426,6 +425,31 @@ angular.module('gi.util').factory('giSocket', [
             }
           });
         }
+      }
+    };
+  }
+]);
+
+angular.module('gi.util').factory('giGeo', [
+  '$q', '$http', '$cookieStore', function($q, $http, $cookies) {
+    var cookieID;
+    cookieID = "giGeo";
+    return {
+      country: function() {
+        var country, deferred;
+        deferred = $q.defer();
+        country = $cookies.get(cookieID);
+        if (country == null) {
+          $http.get("http://ipinfo.io/country").success(function(c) {
+            $cookies.put(cookieID, c);
+            return deferred.resolve(c);
+          }).error(function(data) {
+            return deferred.reject(data);
+          });
+        } else {
+          deferred.resolve(country);
+        }
+        return deferred.promise;
       }
     };
   }

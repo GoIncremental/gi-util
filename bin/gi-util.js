@@ -436,18 +436,18 @@ angular.module('gi.util').factory('giGeo', [
     cookieID = "giGeo";
     return {
       country: function() {
-        var country, deferred;
+        var deferred, geoInfo;
         deferred = $q.defer();
-        country = $cookies.get(cookieID);
-        if (country == null) {
-          $http.get("http://ipinfo.io/country").success(function(c) {
-            $cookies.put(cookieID, c);
-            return deferred.resolve(c);
+        geoInfo = $cookies.get(cookieID);
+        if (geoInfo == null) {
+          $http.get("/api/geo/country").success(function(info) {
+            $cookies.put(cookieID, info);
+            return deferred.resolve(info.countryCode);
           }).error(function(data) {
             return deferred.reject(data);
           });
         } else {
-          deferred.resolve(country);
+          deferred.resolve(geoInfo.countryCode);
         }
         return deferred.promise;
       }

@@ -1,7 +1,7 @@
 {
   "author": "Go Incremental Limited",
   "name": "gi-util",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "main": "./server/index.coffee",
   "scripts": {
     "test": "grunt ci"

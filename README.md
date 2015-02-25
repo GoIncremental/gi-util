@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.1.0
+- Feature: dal SQL returns inserted rows after SQL create calls
+
 v1.0.8
 - fixes issue when using giGeo service behind SSL.  Now proxies back to server
 

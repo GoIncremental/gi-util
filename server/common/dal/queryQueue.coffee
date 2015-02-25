@@ -7,7 +7,8 @@ processQueryQueue = () ->
   if nextQuery?
     queueInProgress = true
     result = []
-    if nextQuery.query.indexOf("SELECT") isnt 0
+    debug = nextQuery.query.indexOf("SELECT") isnt 0
+    if debug
       console.log nextQuery.query
     conn = new tedious.Connection nextQuery.conn
     request = new tedious.Request nextQuery.query, (err, rowCount) ->

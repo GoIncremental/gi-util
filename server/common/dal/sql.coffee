@@ -10,7 +10,7 @@ class QueryBuilder
 
   exec: (cb) ->
     queryQueue.runQuery @query, @returnArray, @dbConnection, cb
-  
+
   create: (obj, cb) ->
     @returnArray = false
     values = "VALUES"
@@ -21,7 +21,7 @@ class QueryBuilder
       @query += separator + key
       separator = ', '
 
-    @query += ') ' + values + ') '
+    @query += ') OUTPUT INSERTED.* ' + values + ') '
     @exec cb
 
   find: (query, cb) ->
@@ -98,7 +98,7 @@ class QueryBuilder
 
     @query = 'DELETE FROM ' + @table +
     ' WHERE ' + @idColumn + ' = ' + query[@idColumn]
-    
+
     if cb?
       @exec cb
     else

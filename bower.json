@@ -1,5 +1,16 @@
 {
   "name": "gi-util",
-  "version": "1.1.0",
-  "main": "./bin/gi-util.js"
+  "version": "1.2.0",
+  "main": "./dist/gi-util.js",
+  "devDependencies": {
+    "angular": "1.2.28",
+    "angular-resource": "1.2.28",
+    "angular-route": "1.2.28",
+    "angular-cookies": "1.2.28",
+    "underscore": "~1.5.2",
+    "momentjs": "~2.3.1",
+    "aws-sdk": "~2.1.16",
+    "json2": "*",
+    "html5shiv": "~3.7.2"
+  }
 }

@@ -1,9 +1,5 @@
 node_modules/
-bower_modules/
-bin/
-!bin/gi-util.js
+bower_components/
 coverage/
-temp/
 npm-debug.log
 .DS_Store
-

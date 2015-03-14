@@ -4,6 +4,10 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.2.1
+- Found a better free service that re-enables client side ip geo lookup.  Have removed
+the server /api based approach (it had various problems with nginx proxies changing the ip etc)
+
 v1.2.0
 - BREAKING CHANGE: Switched from grunt to gulp and moved bower_modules to standard location of bower_components.  Run `gulp` to build gi.js.
 gi-util.js now includes all the core dependencies like moment.js, angular.js etc meaning

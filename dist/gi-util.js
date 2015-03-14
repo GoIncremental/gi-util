@@ -39352,14 +39352,14 @@ angular.module('gi.util').factory('giGeo', [
         deferred = $q.defer();
         geoInfo = $cookies.get(cookieID);
         if (geoInfo == null) {
-          $http.get("/api/geo/country").success(function(info) {
+          $http.get("//freegeoip.net/json/").success(function(info) {
             $cookies.put(cookieID, info);
-            return deferred.resolve(info.countryCode);
+            return deferred.resolve(info.country_code);
           }).error(function(data) {
             return deferred.reject(data);
           });
         } else {
-          deferred.resolve(geoInfo.countryCode);
+          deferred.resolve(geoInfo.country_code);
         }
         return deferred.promise;
       }

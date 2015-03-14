@@ -9,13 +9,13 @@ angular.module('gi.util').factory 'giGeo'
     deferred = $q.defer()
     geoInfo = $cookies.get(cookieID)
     if not geoInfo?
-      $http.get("/api/geo/country").success( (info) ->
+      $http.get("//freegeoip.net/json/").success( (info) ->
         $cookies.put(cookieID, info)
-        deferred.resolve info.countryCode
+        deferred.resolve info.country_code
       ).error (data) ->
         deferred.reject data
     else
-      deferred.resolve geoInfo.countryCode
+      deferred.resolve geoInfo.country_code
 
     deferred.promise
 ]

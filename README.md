@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.2.2
+- Fixed issue where prefix was not honoured on giCrud factory service.
+
 v1.2.1
 - Found a better free service that re-enables client side ip geo lookup.  Have removed
 the server /api based approach (it had various problems with nginx proxies changing the ip etc)

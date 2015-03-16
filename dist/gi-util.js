@@ -39155,9 +39155,9 @@ angular.module('gi.util').factory('giCrud', [
           isArray: true
         }
       };
-      bulkResource = $resource('/api/' + resourceName + '', {}, bulkMethods);
-      resource = $resource('/api/' + resourceName + '/:id', {}, methods);
-      queryResource = $resource('/api/' + resourceName + '/query', {}, queryMethods);
+      bulkResource = $resource(prefix + '/' + resourceName + '', {}, bulkMethods);
+      resource = $resource(prefix + '/' + resourceName + '/:id', {}, methods);
+      queryResource = $resource(prefix + '/' + resourceName + '/query', {}, queryMethods);
       items = [];
       itemsById = {};
       updateMasterList = function(newItem) {

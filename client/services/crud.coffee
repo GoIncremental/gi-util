@@ -36,7 +36,7 @@ angular.module('gi.util').factory 'giCrud'
         params: {}
         isArray: true
 
-    bulkResource = $resource( prefix + '/' + resourceName + '', {}, bulkMethods)
+    bulkResource = $resource(prefix + '/' + resourceName + '', {}, bulkMethods)
     resource = $resource(prefix + '/' + resourceName + '/:id', {}, methods)
     queryResource = $resource(prefix + '/' + resourceName + '/query'
     , {}, queryMethods)

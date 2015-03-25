@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.2.4
+- added support for Mongo 3.X, and switched to a better supported mongo-connect
+
 v1.2.3
 - compiled js file was not updated in last release
 

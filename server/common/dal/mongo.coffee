@@ -2,7 +2,7 @@ _ = require 'underscore'
 mongoose = require 'mongoose'
 require('mongoose-long')(mongoose)
 crudModelFactory = require '../crudModelFactory'
-connectMongo = require 'connect-mongo-store'
+connectMongo = require 'connect-mongo'
 
 getConnectionString = (conf) ->
   uri = "mongodb://"
@@ -40,7 +40,7 @@ module.exports =
       pass: conf.password
     uri = getConnectionString(conf)
     mongoose.connect uri, opts
-    
+
     mongoose.connection.on 'connected',  () ->
       cb() if cb
 
@@ -48,16 +48,11 @@ module.exports =
       cb(err) if cb
 
   sessionStore: (express, conf, cb) ->
-    uri = getConnectionString(conf)
+    options =
+      url: getConnectionString(conf)
     MongoStore = connectMongo(express)
 
-    sessionStore = new MongoStore(uri)    
-    sessionStore.on 'connect', () ->
-      cb() if cb
-    
-    sessionStore.on 'error', (err) ->
-      cb(err) if err
-
+    sessionStore = new MongoStore(options)
     sessionStore
 
   crudFactory: crudModelFactory

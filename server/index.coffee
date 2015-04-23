@@ -9,6 +9,7 @@ configure = (app, dal) ->
   common.extend app.models, models(dal)
   common.extend app.controllers, controllers(app)
   common.extend app.middleware, middleware
+  common.configure()
 
   routes.configure app, common.rest
 

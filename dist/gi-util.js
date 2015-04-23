@@ -43383,7 +43383,78 @@ angular.module('gi.util', ['ngResource', 'ngCookies']);
 
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
-    var factory;
+    var factory, formDirectiveFactory;
+    formDirectiveFactory = function(name, Model) {
+      var formName, lowerName;
+      lowerName = name.toLowerCase();
+      formName = lowerName + 'Form';
+      return {
+        restrict: 'E',
+        scope: {
+          submitText: '@',
+          model: '='
+        },
+        templateUrl: 'gi.commerce.' + formName + '.html',
+        link: {
+          pre: function($scope) {
+            $scope.save = function() {
+              $scope.model.selectedItem.acl = "public-read";
+              return Model.save($scope.model.selectedItem).then(function() {
+                var alert;
+                alert = {
+                  name: lowerName + '-saved',
+                  type: 'success',
+                  msg: name + " Saved."
+                };
+                $scope.$emit('event:show-alert', alert);
+                $scope.$emit(lowerName + '-saved', $scope.model.selectedItem);
+                return $scope.clear();
+              }, function(err) {
+                var alert;
+                alert = {
+                  name: lowerName + '-not-saved',
+                  type: 'danger',
+                  msg: "Failed to save " + name + ". " + err.data.error
+                };
+                return $scope.$emit('event:show-alert', alert);
+              });
+            };
+            $scope.clear = function() {
+              $scope.model.selectedItem = {};
+              $scope[formName].$setPristine();
+              $scope.confirm = false;
+              return $scope.$emit(lowerName + '-form-cleared');
+            };
+            return $scope.destroy = function() {
+              if ($scope.confirm) {
+                return Model.destroy($scope.model.selectedItem._id).then(function() {
+                  var alert;
+                  alert = {
+                    name: lowerName + '-deleted',
+                    type: 'success',
+                    msg: name + ' Deleted.'
+                  };
+                  $scope.$emit('event:show-alert', alert);
+                  $scope.$emit(lowerName + '-deleted');
+                  return $scope.clear();
+                }, function() {
+                  var alert;
+                  alert = {
+                    name: name + " not deleted",
+                    msg: name + " not deleted.",
+                    type: "warning"
+                  };
+                  $scope.$emit('event:show-alert', alert);
+                  return $scope.confirm = false;
+                });
+              } else {
+                return $scope.confirm = true;
+              }
+            };
+          }
+        }
+      };
+    };
     factory = function(resourceName, prefix, idField) {
       var _version, all, allCached, bulkMethods, bulkResource, clearCache, count, destroy, exports, get, getCached, items, itemsById, methods, queryMethods, queryResource, resource, save, updateMasterList, version;
       if (prefix == null) {
@@ -43605,7 +43676,8 @@ angular.module('gi.util').factory('giCrud', [
       return exports;
     };
     return {
-      factory: factory
+      factory: factory,
+      formDirectiveFactory: formDirectiveFactory
     };
   }
 ]);

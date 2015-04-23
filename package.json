@@ -16,7 +16,7 @@
     "coffee-script": "~1.7.1",
     "connect-mongo": "~0.8.0",
     "moment": "~2.0.0",
-    "mongoose": "~4.0.0-rc4",
+    "mongoose": "~4.0.1",
     "mongoose-long": "0.0.2",
     "q": "~0.9.7",
     "request": "^2.53.0",

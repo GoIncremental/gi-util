@@ -2,6 +2,61 @@ angular.module('gi.util').factory 'giCrud'
 , ['$resource', '$q', 'giSocket'
 , ($resource, $q, Socket) ->
 
+  formDirectiveFactory = (name, Model) ->
+    lowerName = name.toLowerCase()
+    formName = lowerName + 'Form'
+
+    restrict: 'E'
+    scope:
+      submitText: '@'
+      model: '='
+    templateUrl: 'gi.commerce.' + formName + '.html'
+    link:
+      pre: ($scope) ->
+        $scope.save = () ->
+          $scope.model.selectedItem.acl = "public-read"
+          Model.save($scope.model.selectedItem).then () ->
+            alert =
+              name: lowerName + '-saved'
+              type: 'success'
+              msg: name + " Saved."
+
+            $scope.$emit 'event:show-alert', alert
+            $scope.$emit lowerName + '-saved', $scope.model.selectedItem
+            $scope.clear()
+          , (err) ->
+            alert =
+              name: lowerName + '-not-saved'
+              type: 'danger'
+              msg: "Failed to save " + name + ". " + err.data.error
+            $scope.$emit 'event:show-alert',alert
+
+        $scope.clear = () ->
+          $scope.model.selectedItem = {}
+          $scope[formName].$setPristine()
+          $scope.confirm = false
+          $scope.$emit lowerName + '-form-cleared'
+
+        $scope.destroy = () ->
+          if $scope.confirm
+            Model.destroy($scope.model.selectedItem._id).then () ->
+              alert =
+                name: lowerName + '-deleted'
+                type: 'success'
+                msg: name + ' Deleted.'
+              $scope.$emit 'event:show-alert', alert
+              $scope.$emit lowerName + '-deleted'
+              $scope.clear()
+            , () ->
+              alert =
+                name: name + " not deleted"
+                msg: name + " not deleted."
+                type: "warning"
+              $scope.$emit 'event:show-alert', alert
+              $scope.confirm = false
+          else
+            $scope.confirm = true
+
   factory = (resourceName, prefix, idField) ->
 
     if not prefix?
@@ -200,4 +255,5 @@ angular.module('gi.util').factory 'giCrud'
 
   #export the crud factory method
   factory: factory
+  formDirectiveFactory: formDirectiveFactory
 ]

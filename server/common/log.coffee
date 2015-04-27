@@ -42,8 +42,10 @@ log = (msg) ->
     if (typeof msg) is 'string'
       logglyClient.log(prefix + msg, tags)
     else
-      msg.prefix = prefix
-      logglyClient.log msg, tags
+      obj =
+        prefix: prefix
+        message: msg
+      logglyClient.log obj, tags
 
 module.exports =
   configure: configure

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.3.1
+- fixed issue where loggly changed the object before logging, which was causing some upstream issues
+
 v1.3.0
 - added support for LOGGLY integration.  Just use gi.log function and pass a string or an object.  To use LOGGLY you must define LOGGLY_API_KEY and LOGGLY_SUBDOMAIN environment variables
 - RECOMMENDATION:  ALL gi* applications should define the following environment variables: GI_APP_ENVIRONMENT, GI_APP_VERSION, GI_CUSTOMER and GI_PRODUCT  Loggly logging

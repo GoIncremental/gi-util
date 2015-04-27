@@ -37,6 +37,7 @@ configure = () ->
     console.log 'loggly not available'
 
 log = (msg) ->
+  console.log msg
   if logglyClient?
     if (typeof msg) is 'string'
       logglyClient.log(prefix + msg, tags)

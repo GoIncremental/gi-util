@@ -4,6 +4,10 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.3.2
+- Fixes change in behaviour on findByIdAndUpdate introduced in mongoose 4
+In Mongoose < 4.X findByIdAndUpdate returned the modified document by default.  This changed in 4.0 so we now pass the options to keep gi-util behaviour the same
+
 v1.3.1
 - fixed issue where loggly changed the object before logging, which was causing some upstream issues
 

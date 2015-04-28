@@ -111,7 +111,7 @@ module.exports = (Resource) ->
     if not json.systemId?
       callback Resource.modelName + ' could not be updated - no systemId'
     else
-      Resource.findByIdAndUpdate(id, json, callback)
+      Resource.findByIdAndUpdate(id, json, {new: true}, callback)
 
   destroy =  (id, systemId, callback) ->
     if not systemId?

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.0
+- Added giLog service and giAnalytics to allow angular client use of loggly and google analytics.  A fuller implementaion of the API will follow in future releases.
+
 v1.3.2
 - Fixes change in behaviour on findByIdAndUpdate introduced in mongoose 4
 In Mongoose < 4.X findByIdAndUpdate returned the modified document by default.  This changed in 4.0 so we now pass the options to keep gi-util behaviour the same

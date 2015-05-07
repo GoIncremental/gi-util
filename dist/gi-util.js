@@ -43379,7 +43379,330 @@ function hasOwnProperty(obj, prop) {
 
 },{"./XMLBuilder":71}]},{},[1])
 
-angular.module('gi.util', ['ngResource', 'ngCookies']);
+/**
+ *  logglyLogger is a module which will send your log messages to a configured
+ *  [Loggly](http://loggly.com) connector.
+ *
+ *  Major credit should go to Thomas Burleson, who's highly informative blog
+ *  post on [Enhancing AngularJs Logging using Decorators](http://bit.ly/1pOI0bb)
+ *  provided the foundation (if not the majority of the brainpower) for this
+ *  module.
+ */
+; (function( angular ) {
+  "use strict";
+
+  angular.module( 'logglyLogger.logger', [] )
+    .provider( 'LogglyLogger', function() {
+        var self = this;
+
+        var logSuccessHandler;
+        var logFailureHandler;
+
+        var logLevels = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
+
+        var https = true;
+        var extra = {};
+        var includeCurrentUrl = false;
+        var includeTimestamp = false;
+        var tag = 'angular';
+        var sendConsoleErrors = false;
+        var logToConsole = true;
+
+        // The minimum level of messages that should be sent to loggly.
+        var level = 0;
+
+        var token = null;
+        var endpoint = '://logs-01.loggly.com/inputs/';
+
+        var buildUrl = function ( data ) {
+          var msg = encodeURIComponent( angular.toJson( data ) );
+          return (https ? 'https' : 'http') + endpoint + token + '/tag/'+ tag + '/.gif?PLAINTEXT=' + msg;
+        };
+
+        this.setExtra = function (d) {
+          extra = d;
+          return self;
+        };
+
+        this.inputToken = function ( s ) {
+          if (angular.isDefined(s)) {
+            token = s;
+            return self;
+          }
+
+          return token;
+        };
+
+        this.useHttps = function (flag) {
+          if (angular.isDefined(flag)) {
+            https = !!flag;
+            return self;
+          }
+
+          return https;
+        };
+
+        this.includeUrl = function (flag) {
+          if (angular.isDefined(flag)) {
+            includeCurrentUrl = !!flag;
+            return self;
+          }
+
+          return includeCurrentUrl;
+        };
+
+        this.includeTimestamp = function (flag) {
+          if (angular.isDefined(flag)) {
+            includeTimestamp = !!flag;
+            return self;
+          }
+
+          return includeTimestamp;
+        };
+
+        this.inputTag = function (usrTag){
+          if (angular.isDefined(usrTag)) {
+            tag = usrTag;
+            return self;
+          }
+
+          return tag;
+        };
+
+        this.sendConsoleErrors = function (flag){
+          if (angular.isDefined(flag)) {
+            sendConsoleErrors = !!flag;
+            return self;
+          }
+
+          return sendConsoleErrors;
+        };
+
+        this.level = function ( name ) {
+
+          if( angular.isDefined( name ) ) {
+            var newLevel = logLevels.indexOf( name.toUpperCase() );
+
+            if( newLevel < 0 ) {
+                throw "Invalid logging level specified: " + name;
+            } else {
+                level = newLevel;
+            }
+
+            return self;
+          }
+
+          return logLevels[level];
+        };
+
+        this.isLevelEnabled = function( name ) {
+            return logLevels.indexOf( name.toUpperCase() ) >= level;
+        };
+
+
+        this.logToConsole = function (flag) {
+          if (angular.isDefined(flag)) {
+            logToConsole = !!flag;
+            return self;
+          }
+
+          return logToConsole;
+        };
+
+        this.$get = [ '$injector', function ($injector) {
+
+          var lastLog = null;
+
+
+          /**
+           * Send the specified data to loggly as a json message.
+           * @param data
+           */
+          var sendMessage = function (data) {
+            //If a token is not configured, don't do anything.
+            if (!token) {
+              return;
+            }
+
+            //TODO we're injecting this here to resolve circular dependency issues.  Is this safe?
+            var $location = $injector.get( '$location' );
+
+            lastLog = new Date();
+
+            var sentData = angular.extend({}, extra, data);
+
+            if (includeCurrentUrl) {
+              sentData.url = $location.absUrl()
+            }
+
+            if( includeTimestamp ) {
+              sentData.timestamp = lastLog.toISOString();
+            }
+
+            //Loggly's API doesn't send us cross-domain headers, so we can't interact directly
+            new Image().src = buildUrl(sentData);
+          };
+
+          var attach = function() {
+          };
+
+          return {
+            lastLog: function(){ return lastLog },
+            sendConsoleErrors: function(){ return sendConsoleErrors },
+            level : function() { return level },
+            isLevelEnabled : self.isLevelEnabled,
+            attach: attach,
+            sendMessage: sendMessage,
+            logToConsole: logToConsole
+          }
+        }];
+
+    } );
+
+
+    angular.module( 'logglyLogger', ['logglyLogger.logger'] )
+      .config( [ '$provide', function( $provide ) {
+
+        $provide.decorator('$log', [ "$delegate", '$injector', function ( $delegate, $injector ) {
+
+
+          var wrapLogFunction = function(logFn, level, loggerName) {
+
+            var logger = $injector.get('LogglyLogger');
+
+            var wrappedFn = function () {
+              var args = Array.prototype.slice.call(arguments);
+
+              if(logger.logToConsole) {
+                logFn.apply(null, args);
+              }
+
+              // Skip messages that have a level that's lower than the configured level for this logger.
+              if( !logger.isLevelEnabled( level ) ) {
+                return;
+              }
+
+              var msg = args.length == 1 ? args[0] : args;
+              var sending = { level: level };
+
+              if(angular.isDefined(msg.stack)){
+                //handling console errors
+                if(logger.sendConsoleErrors() === true){
+                    sending.message = msg.message;
+                    sending.stack = msg.stack;
+                }
+                else{
+                  return;
+                }
+              }
+              else if(angular.isObject(msg)){
+                //handling JSON objects
+                sending = angular.extend({}, msg, sending);
+              }
+              else{
+                //sending plain text
+                sending.message = msg;
+              }
+
+              if( loggerName ) {
+                sending.logger = msg
+              }
+
+              //Send the message to through the loggly sender
+              logger.sendMessage( sending );
+            };
+
+            wrappedFn.logs = [];
+
+            return wrappedFn;
+          };
+
+          var _$log = (function ($delegate) {
+            return {
+              log: $delegate.log,
+              info: $delegate.info,
+              warn: $delegate.warn,
+              error: $delegate.error
+            };
+          })($delegate);
+
+          var getLogger = function ( name ) {
+            return {
+              log:    wrapLogFunction( _$log.log, 'INFO', name ),
+              debug:  wrapLogFunction( _$log.debug, 'DEBUG', name ),
+              info:   wrapLogFunction( _$log.info, 'INFO', name ),
+              warn:   wrapLogFunction( _$log.warn, 'WARN', name ),
+              error:  wrapLogFunction( _$log.error, 'ERROR', name )
+            }
+          };
+
+          //wrap the existing API
+          $delegate.log =    wrapLogFunction($delegate.log, 'INFO');
+          $delegate.debug =  wrapLogFunction($delegate.debug, 'DEBUG');
+          $delegate.info =   wrapLogFunction($delegate.info, 'INFO');
+          $delegate.warn =   wrapLogFunction($delegate.warn, 'WARN');
+          $delegate.error =  wrapLogFunction($delegate.error, 'ERROR');
+
+          //Add some methods
+          $delegate.getLogger = getLogger;
+
+          return $delegate;
+        }]);
+
+      }]);
+
+
+
+})(window.angular);
+
+angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger']);
+
+angular.module('gi.util').config([
+  'giLogProvider', function(giLogProvider) {
+    if (typeof logglyKey !== "undefined" && logglyKey !== null) {
+      return giLogProvider.setLogglyToken(logglyKey);
+    }
+  }
+]);
+
+angular.module('gi.util').provider('giAnalytics', function() {
+  var enhancedEcommerce, google;
+  google = null;
+  enhancedEcommerce = false;
+  if (typeof ga !== "undefined" && ga !== null) {
+    google = ga;
+  }
+  this.$get = [
+    'giLog', function(Log) {
+      var requireGaPlugin, sendImpression, sendPageView;
+      requireGaPlugin = function(x) {
+        Log.log('ga requiring ' + x);
+        if (google != null) {
+          return google('require', x);
+        }
+      };
+      sendImpression = function(obj) {
+        if (google != null) {
+          if (!enhancedEcommerce) {
+            requireGaPlugin('ec');
+          }
+          Log.log('ga sending impression');
+          Log.log(obj);
+          return google('ec:addImpression', obj);
+        }
+      };
+      sendPageView = function() {
+        Log.log('ga sending page view');
+        return google('send', 'pageview');
+      };
+      return {
+        Impression: sendImpression,
+        PageView: sendPageView
+      };
+    }
+  ];
+  return this;
+});
 
 angular.module('gi.util').factory('giCrud', [
   '$resource', '$q', 'giSocket', function($resource, $q, Socket) {
@@ -43727,6 +44050,22 @@ angular.module('gi.util').factory('giLocalStorage', [
         return $window.localStorage[key];
       }
     };
+  }
+]);
+
+angular.module('gi.util').provider('giLog', [
+  'LogglyLoggerProvider', function(LogglyLoggerProvider) {
+    this.setLogglyToken = function(token) {
+      if (token != null) {
+        return LogglyLoggerProvider.inputToken(token);
+      }
+    };
+    this.$get = [
+      '$log', function($log) {
+        return $log;
+      }
+    ];
+    return this;
   }
 ]);
 

@@ -16,9 +16,8 @@ module.exports = (dal) ->
       resourceType =
         name: val.name
         systemId: systemId
-      crud.update resourceType
+      crud.update val._id
       , resourceType
-      , {upsert: true}
       , cb
 
   exports = common.extend {}, crud

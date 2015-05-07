@@ -26,7 +26,7 @@ libs = () ->
             'angular-route/angular-route.js'
             'angular-cookies/angular-cookies.js'
             'aws-sdk/dist/aws-sdk.js'
-
+            'angular-loggly-logger/angular-loggly-logger.js'
             ], {cwd:'bower_components/'})
 
 gulp.task 'clean', (cb) ->

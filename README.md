@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.1
+- Enhanced giLog service to bring it into line with the server side conventions
+
 v1.4.0
 - Added giLog service and giAnalytics to allow angular client use of loggly and google analytics.  A fuller implementaion of the API will follow in future releases.
 

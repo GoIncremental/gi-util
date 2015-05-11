@@ -43678,24 +43678,25 @@ angular.module('gi.util').provider('giAnalytics', function() {
     'giLog', function(Log) {
       var requireGaPlugin, sendImpression, sendPageView;
       requireGaPlugin = function(x) {
-        Log.log('ga requiring ' + x);
+        Log.debug('ga requiring ' + x);
         if (google != null) {
           return google('require', x);
         }
       };
       sendImpression = function(obj) {
-        if (google != null) {
+        if ((google != null) && (obj != null)) {
           if (!enhancedEcommerce) {
             requireGaPlugin('ec');
           }
-          Log.log('ga sending impression');
-          Log.log(obj);
+          Log.debug('ga sending impression ' + obj.name);
           return google('ec:addImpression', obj);
         }
       };
       sendPageView = function() {
-        Log.log('ga sending page view');
-        return google('send', 'pageview');
+        if (google != null) {
+          Log.debug('ga sending page view');
+          return google('send', 'pageview');
+        }
       };
       return {
         Impression: sendImpression,

@@ -6,21 +6,22 @@ angular.module('gi.util').provider 'giAnalytics', () ->
 
   @$get = [ 'giLog', (Log) ->
     requireGaPlugin = (x) ->
-      Log.log('ga requiring ' + x)
+      Log.debug('ga requiring ' + x)
       if google?
         google 'require', x
 
     sendImpression = (obj) ->
-      if google?
+      if google? and obj?
         if not enhancedEcommerce
           requireGaPlugin 'ec'
-        Log.log('ga sending impression')
-        Log.log(obj)
+
+        Log.debug('ga sending impression ' + obj.name)
         google 'ec:addImpression', obj
 
     sendPageView = () ->
-      Log.log('ga sending page view')
-      google 'send', 'pageview'
+      if google?
+        Log.debug('ga sending page view')
+        google 'send', 'pageview'
 
     Impression: sendImpression
     PageView: sendPageView

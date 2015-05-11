@@ -43659,8 +43659,10 @@ angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger']);
 
 angular.module('gi.util').config([
   'giLogProvider', function(giLogProvider) {
-    if (typeof logglyKey !== "undefined" && logglyKey !== null) {
-      return giLogProvider.setLogglyToken(logglyKey);
+    if (typeof loggly !== "undefined" && loggly !== null) {
+      giLogProvider.setLogglyToken(loggly.key);
+      giLogProvider.setLogglyTags("angular," + loggly.tags);
+      return giLogProvider.setLogglyExtra(loggly.extra);
     }
   }
 ]);
@@ -44055,14 +44057,69 @@ angular.module('gi.util').factory('giLocalStorage', [
 
 angular.module('gi.util').provider('giLog', [
   'LogglyLoggerProvider', function(LogglyLoggerProvider) {
+    var prefix, wrap;
+    prefix = "";
     this.setLogglyToken = function(token) {
       if (token != null) {
         return LogglyLoggerProvider.inputToken(token);
       }
     };
+    this.setLogglyTags = function(tags) {
+      if (tags != null) {
+        return LogglyLoggerProvider.inputTag(tags);
+      }
+    };
+    this.setLogglyExtra = function(extra) {
+      if (extra != null) {
+        LogglyLoggerProvider.setExtra(extra);
+      }
+      if (extra.customer != null) {
+        prefix += extra.customer;
+      } else {
+        prefix = "NO CUSTOMER";
+      }
+      if (extra.product != null) {
+        prefix += ":" + extra.product;
+      }
+      if (extra.environment != null) {
+        prefix += ":" + extra.environment;
+      }
+      if (extra.version != null) {
+        prefix += ":" + extra.version;
+      }
+      return prefix += ": ";
+    };
+    wrap = function(msg) {
+      var obj;
+      if ((typeof msg) === 'string') {
+        return prefix + msg;
+      } else {
+        obj = {
+          prefix: prefix,
+          message: msg
+        };
+        return obj;
+      }
+    };
     this.$get = [
       '$log', function($log) {
-        return $log;
+        return {
+          log: function(msg) {
+            return $log.log(wrap(msg));
+          },
+          debug: function(msg) {
+            return $log.debug(wrap(msg));
+          },
+          info: function(msg) {
+            return $log.info(wrap(msg));
+          },
+          warn: function(msg) {
+            return $log.warn(wrap(msg));
+          },
+          error: function(msg) {
+            return $log.warn(wrap(msg));
+          }
+        };
       }
     ];
     return this;

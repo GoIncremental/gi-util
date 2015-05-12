@@ -4,6 +4,10 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.2
+- Added giMatch directive for form validation to check two fields match
+<input type="text" gi-match="model.property" ng-required="expression to test if this field needs to be validated and non empty" />
+
 v1.4.1
 - Enhanced giLog service to bring it into line with the server side conventions
 

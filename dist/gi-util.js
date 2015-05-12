@@ -43667,6 +43667,56 @@ angular.module('gi.util').config([
   }
 ]);
 
+angular.module('gi.util').directive('giMatch', [
+  '$parse', 'giLog', function($parse, Log) {
+    return {
+      require: '?ngModel',
+      restrict: 'A',
+      link: function(scope, elem, attrs, ctrl) {
+        var evaluateMatch, getMatchValue, isRequired, matchGetter, requiredGetter;
+        if (!ctrl) {
+          Log.warn('giMatch validation requires ngModel to be on the element');
+          return;
+        } else {
+          Log.debug('giMatch linked');
+        }
+        matchGetter = $parse(attrs.giMatch);
+        requiredGetter = $parse(attrs.ngRequired);
+        evaluateMatch = function() {
+          return getMatchValue();
+        };
+        scope.$watch(evaluateMatch, function(newVal) {
+          return ctrl.$$parseAndValidate();
+        });
+        ctrl.$validators.giMatch = function() {
+          var match;
+          if (requiredGetter()) {
+            match = getMatchValue();
+            if (match != null) {
+              return ctrl.$viewValue === match;
+            } else {
+              return true;
+            }
+          } else {
+            return true;
+          }
+        };
+        isRequired = function() {
+          return requiredGetter(scope);
+        };
+        return getMatchValue = function() {
+          var match;
+          match = matchGetter(scope);
+          if (angular.isObject(match) && match.hasOwnProperty('$viewValue')) {
+            match = match.$viewValue;
+          }
+          return match;
+        };
+      }
+    };
+  }
+]);
+
 angular.module('gi.util').provider('giAnalytics', function() {
   var enhancedEcommerce, google;
   google = null;

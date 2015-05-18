@@ -4,12 +4,15 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.4
+- Merge patch for release 1.0.10 (adds support to filter fields in queries)
+
 v1.4.3
 - Merge patch for release 1.0.9 (adds record count to find() callback)
 
 v1.4.2
 - Added giMatch directive for form validation to check two fields match
-<input type="text" gi-match="model.property" ng-required="expression to test if this field needs to be validated and non empty" />
+````<input type="text" gi-match="model.property" ng-required="expression to test if this field needs to be validated and non empty" />````
 
 v1.4.1
 - Enhanced giLog service to bring it into line with the server side conventions
@@ -52,6 +55,10 @@ there is no need to import these again from the customer projects.
 
 v1.1.0
 - Feature: dal SQL returns inserted rows after SQL create calls
+
+v1.0.10
+- Added the ability to select columns to return from find().  Specify select on options
+i.e.: options.select = 'name occupation' to return just _id, name and occupation
 
 v1.0.9
 - returns record count as part of find() callback

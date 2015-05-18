@@ -60,6 +60,9 @@ module.exports = (Resource) ->
       if options.populate?
         command.populate populate
 
+      if options.select?
+        command.select options.select
+
       command.exec (err, results) ->
         if err
           callback err, null, 0

@@ -41,20 +41,20 @@ module.exports = (Resource) ->
         if found
           query = options.query
         else
-          callback('systemId not specified as one of the $and conditions', null, 0) if callback
+          callback('systemId not specified as one of the $and conditions', null, 0, 0) if callback
           return
 
       else
-        callback('systemId not specified in query', null, 0) if callback
+        callback('systemId not specified in query', null, 0, 0) if callback
         return
     else
-      callback('options must be specfied for find', null, 0) if callback
+      callback('options must be specfied for find', null, 0, 0) if callback
       return
 
     skipFrom = page * max - max
 
     if max < 1
-      callback(null, [], 0) if callback
+      callback(null, [], 0, 0) if callback
     else
       command = Resource.find(query).sort(sort).skip(skipFrom).limit(max)
       if options.populate?
@@ -66,11 +66,11 @@ module.exports = (Resource) ->
         else
           Resource.count query, (err, count) ->
             if err
-              callback('could not count the results', null, 0) if callback
+              callback('could not count the results', null, 0, 0) if callback
             else
               #safe because max >= 1
               pageCount = Math.ceil(count/max) or 0
-              callback(null, results, pageCount) if callback
+              callback(null, results, pageCount, count) if callback
 
   findOne = (query, callback) ->
     if not query? or not query.systemId?

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.3
+- Merge patch for release 1.0.9 (adds record count to find() callback)
+
 v1.4.2
 - Added giMatch directive for form validation to check two fields match
 <input type="text" gi-match="model.property" ng-required="expression to test if this field needs to be validated and non empty" />
@@ -49,6 +52,9 @@ there is no need to import these again from the customer projects.
 
 v1.1.0
 - Feature: dal SQL returns inserted rows after SQL create calls
+
+v1.0.9
+- returns record count as part of find() callback
 
 v1.0.8
 - fixes issue when using giGeo service behind SSL.  Now proxies back to server

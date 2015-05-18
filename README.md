@@ -4,6 +4,10 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.0.10
+- Added the ability to select columns to return from find().  Specify select on options
+i.e.: options.select = 'name occupation' to return just _id, name and occupation
+
 v1.0.9
 - returns record count as part of find() callback
 

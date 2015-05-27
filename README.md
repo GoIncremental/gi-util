@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.4.5
+- Fixes issue where items in local storage were double json stringified.
+
 v1.4.4
 - Merge patch for release 1.0.10 (adds support to filter fields in queries)
 

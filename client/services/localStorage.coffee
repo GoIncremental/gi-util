@@ -3,9 +3,9 @@ angular.module('gi.util').factory 'giLocalStorage'
 , ($window) ->
   get: (key) ->
     if $window.localStorage[key]
-      cart = angular.fromJson($window.localStorage[key])
-      return JSON.parse(cart)
-    false
+      angular.fromJson($window.localStorage[key])
+    else
+      false
 
   set: (key, val) ->
     if not val?

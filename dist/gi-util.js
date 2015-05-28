@@ -43793,7 +43793,7 @@ angular.module('gi.util').directive('giMatch', [
         });
         ctrl.$validators.giMatch = function() {
           var match;
-          if (requiredGetter()) {
+          if (requiredGetter(scope)) {
             match = getMatchValue();
             if (match != null) {
               return ctrl.$viewValue === match;

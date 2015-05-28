@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.5.1
+- Fixes issue with giMatch where it didn't evaluate the ng-required attribute correctly
+
 v1.5.0
 - Fixes issue where items in local storage were double json stringified.
 - Adds giUtil angular service, which for now exposes emailRegex property for  

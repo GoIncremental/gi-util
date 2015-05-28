@@ -24,7 +24,7 @@ angular.module('gi.util').directive 'giMatch'
       ctrl.$$parseAndValidate()
 
     ctrl.$validators.giMatch = () ->
-      if requiredGetter()
+      if requiredGetter(scope)
         match = getMatchValue()
         if match?
           ctrl.$viewValue is match

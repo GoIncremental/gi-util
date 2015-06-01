@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.5.2
+- Adds Angular Touch and ngRoute to imported modules (no need to import further up the app chain any more)
+
 v1.5.1
 - Fixes issue with giMatch where it didn't evaluate the ng-required attribute correctly
 

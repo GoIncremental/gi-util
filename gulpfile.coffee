@@ -25,6 +25,7 @@ libs = () ->
             'angular-resource/angular-resource.js'
             'angular-route/angular-route.js'
             'angular-cookies/angular-cookies.js'
+            'angular-touch/angular-touch.js'
             'aws-sdk/dist/aws-sdk.js'
             'angular-loggly-logger/angular-loggly-logger.js'
             ], {cwd:'bower_components/'})

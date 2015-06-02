@@ -12,7 +12,7 @@ module.exports = (dal) ->
 
   getNext: (name, systemId, callback) ->
     model.findOneAndUpdate {name: name, systemId: systemId}
-    , {$inc : {number: 1}}, {upsert: true}, (err, res) ->
+    , {$inc : {number: 1}}, {upsert: true, new: true}, (err, res) ->
       if err
         callback('error', null) if callback
       else

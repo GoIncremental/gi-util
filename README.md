@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.5.4
+- Fixed issue with counters getNext where behaviour had change with mongoose 4.x
+
 v1.5.3
 - Add previewNext to counters model - hints at the next number for a given name.
 

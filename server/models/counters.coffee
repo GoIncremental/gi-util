@@ -17,3 +17,12 @@ module.exports = (dal) ->
         callback('error', null) if callback
       else
         callback(null, res.number) if callback
+
+  previewNext: (name, systemId, callback) ->
+    model.findOne {name: name, systemId: systemId}, (err, res) ->
+      if err
+        callback('error', null) if callback
+      else if res?.number
+        callback(null, res.number + 1) if callback
+      else
+        callback(null, 1) if callback

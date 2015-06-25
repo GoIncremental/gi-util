@@ -44381,7 +44381,7 @@ function hasOwnProperty(obj, prop) {
 
 })(window.angular);
 
-angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute']);
+angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']);
 
 angular.module('gi.util').config([
   'giLogProvider', function(giLogProvider) {

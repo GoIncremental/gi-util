@@ -13,6 +13,7 @@
     "aws-sdk": "~2.1.16",
     "json2": "*",
     "html5shiv": "~3.7.2",
-    "angular-loggly-logger": "~0.1.1"
+    "angular-loggly-logger": "~0.1.1",
+    "ng-device-detector": "~1.1.7"
   }
 }

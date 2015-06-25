@@ -1,5 +1,5 @@
 angular.module 'gi.util'
-, ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute']
+, ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']
 
 angular.module('gi.util').config ['giLogProvider', (giLogProvider) ->
   if loggly?

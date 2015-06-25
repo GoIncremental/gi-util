@@ -28,6 +28,8 @@ libs = () ->
             'angular-touch/angular-touch.js'
             'aws-sdk/dist/aws-sdk.js'
             'angular-loggly-logger/angular-loggly-logger.js'
+            're-tree/re-tree.js'
+            'ng-device-detector/ng-device-detector.js'
             ], {cwd:'bower_components/'})
 
 gulp.task 'clean', (cb) ->

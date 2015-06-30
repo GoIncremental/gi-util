@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.8.0
+- Added giI18n service to start providing a mechanism for internationalisation.
+
 v1.7.0
 - Added ng-device-detector
 

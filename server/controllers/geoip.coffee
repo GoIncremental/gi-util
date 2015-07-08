@@ -13,12 +13,15 @@ module.exports = () ->
       ipToSend = req.ip
 
     common.log "IP request: " + ipToSend
-    request apiEndpoint + "/" + apiVer + "/" + "/geoip/" + ipToSend
-    , (err, response, body) ->
+    uri = apiEndpoint + "/" + apiVer + "/" + "geoip/" + ipToSend
+    request uri, (err, response, body) ->
       common.log 'back from goinc api'
       if err?
         common.log 'error: ' + err
         res.json 500, err
       else
         common.log body
-        res.json 200, JSON.parse(body)
+        if response.statusCode is 200
+          res.json 200, JSON.parse(body)
+        else
+          res.json 404, {}

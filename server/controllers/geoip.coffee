@@ -6,13 +6,19 @@ module.exports = () ->
   apiVer = process.env.GOINC_API_VERSION
 
   my: (req, res) ->
-    common.log "IP request: " + req.ip + "X-Forwarded-For: " + req.get('x-forwarded-for')
-    request apiEndpoint + "/" + apiVer + "/" + "/geoip/" + req.get('x-forwarded-for')
+    xForward = req.get('x-forwarded-for')
+    if xForward? and (xForward isnt "")
+      ipToSend = xForward.split(',')[0]
+    else
+      ipToSend = req.ip
+
+    common.log "IP request: " + ipToSend
+    request apiEndpoint + "/" + apiVer + "/" + "/geoip/" + ipToSend
     , (err, response, body) ->
       common.log 'back from goinc api'
       if err?
-        common.log err
-        res.json 500, err.toString()
+        common.log 'error: ' + err
+        res.json 500, err
       else
         common.log body
         res.json 200, JSON.parse(body)

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.9.0
+- Added /api/geoip service.  Usage requires setting GOINC_API_VERSION and GOINC_API_ENDPOINT environment vars
+
 v1.8.0
 - Added giI18n service to start providing a mechanism for internationalisation.
 

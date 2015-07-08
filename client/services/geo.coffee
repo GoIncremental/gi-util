@@ -5,11 +5,10 @@ angular.module('gi.util').factory 'giGeo'
   cookieID = "giGeo"
 
   country: () ->
-
     deferred = $q.defer()
     geoInfo = $cookies.get(cookieID)
     if not geoInfo?
-      $http.get("//freegeoip.net/json/").success( (info) ->
+      $http.get("/api/geoip").success( (info) ->
         $cookies.put(cookieID, info)
         deferred.resolve info.country_code
       ).error (data) ->

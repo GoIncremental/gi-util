@@ -6,6 +6,8 @@ gi-util
 ### Release Notes
 v1.9.1
 - Improved reliability of /api/geoip in particular with handling x-forwarded-for header
+- Client giGeo service
+
 v1.9.0
 - Added /api/geoip service.  Usage requires setting GOINC_API_VERSION and GOINC_API_ENDPOINT environment vars
 

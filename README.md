@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.9.2
+- fix issue with geoip uri
+
 v1.9.1
 - Improved reliability of /api/geoip in particular with handling x-forwarded-for header
 - Client giGeo service

@@ -1,6 +1,6 @@
 {
   "name": "gi-util",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "main": "./dist/gi-util.js",
   "devDependencies": {
     "angular": "1.3.15",

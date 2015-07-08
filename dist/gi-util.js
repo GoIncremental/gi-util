@@ -44762,7 +44762,7 @@ function hasOwnProperty(obj, prop) {
         }]);
 })(angular);
 
-angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']).value('version', '1.8.0').config([
+angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']).value('version', '1.9.1').config([
   'giLogProvider', function(giLogProvider) {
     if (typeof loggly !== "undefined" && loggly !== null) {
       giLogProvider.setLogglyToken(loggly.key);
@@ -45173,7 +45173,7 @@ angular.module('gi.util').factory('giGeo', [
         deferred = $q.defer();
         geoInfo = $cookies.get(cookieID);
         if (geoInfo == null) {
-          $http.get("//freegeoip.net/json/").success(function(info) {
+          $http.get("/api/geoip").success(function(info) {
             $cookies.put(cookieID, info);
             return deferred.resolve(info.country_code);
           }).error(function(data) {

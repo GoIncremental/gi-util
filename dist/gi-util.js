@@ -44762,7 +44762,7 @@ function hasOwnProperty(obj, prop) {
         }]);
 })(angular);
 
-angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']).value('version', '1.9.1').config([
+angular.module('gi.util', ['ngResource', 'ngCookies', 'logglyLogger', 'ngTouch', 'ngRoute', 'ng.deviceDetector']).value('version', '1.9.3').config([
   'giLogProvider', function(giLogProvider) {
     if (typeof loggly !== "undefined" && loggly !== null) {
       giLogProvider.setLogglyToken(loggly.key);
@@ -45365,11 +45365,27 @@ angular.module('gi.util').factory('giSocket', [
   }
 ]);
 
+var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
 angular.module('gi.util').factory('giUtil', [
   function() {
     return {
       emailRegex: /^[0-9a-zA-Z][-0-9a-zA-Z.+_]*@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$/,
-      vatRegex: /^(AT|BE|BG|CY|CZ|DE|DK|EE|EL|ES|FI|FR|GB|HU|IE|IT|LT|LU|LV|MT|NL|PL|PT|SE|SI|SK|RO)(\w{8,12})$/
+      vatRegex: /^(AT|BE|BG|CY|CZ|DE|DK|EE|EL|ES|FI|FR|GB|HU|IE|IT|LT|LU|LV|MT|NL|PL|PT|SE|SI|SK|RO)(\w{8,12})$/,
+      countrySort: function(topCodes) {
+        return function(country) {
+          var index, ref;
+          if ((country != null ? country.code : void 0) != null) {
+            index = (ref = country.code, indexOf.call(topCodes, ref) >= 0);
+            if (index) {
+              return topCodes.indexOf(country.code);
+            } else {
+              return country.name;
+            }
+          }
+          return "";
+        };
+      }
     };
   }
 ]);

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.9.4
+- Freeze version of mongoose at 1.0.7 (higher versions have a bug with $each at the moment)
+
 v1.9.3
 - added countrySort method to util
 

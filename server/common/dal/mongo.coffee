@@ -6,15 +6,25 @@ connectMongo = require 'connect-mongo'
 
 getConnectionString = (conf) ->
   uri = "mongodb://"
+
+  if conf.username?
+    uri += conf.username + ":" + conf.password + "@"
+
   separator = ""
   if conf.servers?
     _.each conf.servers, (server) ->
       uri += separator +  server.host + ":" + server.port
       separator = ","
-    uri += "/" + conf.name
-
   else
-    uri += conf.host + ":" + conf.port + "/" + conf.name
+    uri += conf.host + ":" + conf.port
+
+  uri += "/" + conf.name
+  if conf.ssl
+    uri += "?ssl=true"
+  else
+    uri += "?ssl=false"
+  if conf.authSource?
+    uri += "&authSource=" + conf.authSource
   uri
 
 schemaFactory = (def) ->
@@ -35,11 +45,9 @@ module.exports =
   connect: (conf, cb) ->
     port = parseInt conf.port
 
-    opts =
-      user: conf.username
-      pass: conf.password
     uri = getConnectionString(conf)
-    mongoose.connect uri, opts
+
+    mongoose.connect uri, {}
 
     mongoose.connection.on 'connected',  () ->
       cb() if cb

@@ -4,6 +4,9 @@ gi-util
 [![Build Status](https://drone.goincremental.com/github.com/GoIncremental/gi-util/status.svg?branch=master)](https://drone.goincremental.com/github.com/GoIncremental/gi-util)
 
 ### Release Notes
+v1.9.6
+- Added Analytics for product impressions
+
 v1.9.5
 - Added options to support authentication and SSL mongo connections via dal.
 
